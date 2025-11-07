@@ -1,13 +1,15 @@
 .header {
-  background-color: var(--accent);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(18px);
   width: 100%;
-  height: 64px;
+  height: 76px;
   display: flex;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(15, 27, 64, 0.08);
+  border-bottom: 1px solid rgba(15, 27, 64, 0.05);
 }
 
 .header-container {
@@ -23,21 +25,25 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   text-decoration: none;
   color: var(--black);
 }
 
 .logo ion-icon {
-  font-size: 40px;
-  color: var(--black);
+  font-size: 42px;
+  color: var(--brand-teal);
+  padding: 10px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(20, 184, 166, 0.2), rgba(42, 77, 208, 0.1));
 }
 
 .logo h1 {
   font-family: var(--font-primary);
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 28px;
+  font-weight: 500;
   margin: 0;
+  color: var(--brand-navy);
 }
 
 .nav {
@@ -47,52 +53,74 @@
 }
 
 .nav-link {
-  font-family: var(--font-primary);
-  font-size: 14px;
-  color: var(--black);
+  font-family: var(--font-tertiary);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: var(--gray-text);
   text-decoration: none;
-  transition: opacity 0.3s;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand-indigo), var(--brand-teal));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
 }
 
 .nav-link:hover {
-  opacity: 0.7;
+  color: var(--brand-navy);
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
 }
 
 .btn-signup {
-  background-color: var(--white);
-  border: 1px solid var(--gray-border);
-  border-radius: 8px;
-  padding: 8px 20px;
-  font-family: var(--font-primary);
+  background: linear-gradient(135deg, var(--brand-indigo), var(--brand-teal));
+  border: none;
+  border-radius: 999px;
+  padding: 10px 26px;
+  font-family: var(--font-tertiary);
   font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.75px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--gray-text);
-  transition: all 0.3s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: var(--white);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 15px 30px rgba(42, 77, 208, 0.25);
 }
 
 .btn-signup:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 18px 40px rgba(20, 184, 166, 0.35);
 }
 
 @media (max-width: 768px) {
   .nav {
-    gap: 15px;
+    gap: 18px;
   }
 
   .logo h1 {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .nav-link {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .btn-signup {
     font-size: 12px;
-    padding: 6px 15px;
+    padding: 8px 18px;
   }
 }

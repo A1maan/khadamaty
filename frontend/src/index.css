@@ -1,20 +1,38 @@
 :root {
-  /* Colors from Figma design */
-  --white: #FFFFFF;
-  --black: #000000;
-  --gray-light: #F1F1F1;
-  --gray-medium: #C9C3C3;
-  --gray-dark: #979595;
-  --gray-border: #C9CFDA;
-  --gray-text: #B0BAC9;
-  --gray-bg: #CAC8C8;
-  --gray-card: #EDEDED;
-  --primary: #9D9D9D;
-  --primary-dark: #908C8C;
-  --accent: #A7A7A7;
-  --error: #EE0202;
-  --success: #5FD855;
-  
+  /* Brand palette */
+  --white: #ffffff;
+  --black: #0b1426;
+  --brand-navy: #0f1b40;
+  --brand-indigo: #2a4dd0;
+  --brand-indigo-dark: #1f3bb3;
+  --brand-teal: #14b8a6;
+  --brand-sun: #f4a259;
+  --brand-rose: #f472b6;
+  --gray-50: #f7f8fc;
+  --gray-100: #eef2ff;
+  --gray-200: #e4e8f3;
+  --gray-300: #cfd8ea;
+  --gray-500: #6b7280;
+  --gray-700: #4b5563;
+
+  /* Legacy tokens mapped to new palette */
+  --gray-light: var(--gray-100);
+  --gray-medium: var(--gray-200);
+  --gray-dark: var(--gray-500);
+  --gray-border: var(--gray-300);
+  --gray-text: var(--gray-700);
+  --gray-bg: var(--gray-50);
+  --gray-card: #ffffff;
+  --primary: var(--brand-indigo);
+  --primary-dark: var(--brand-indigo-dark);
+  --accent: var(--brand-teal);
+  --error: #ef4444;
+  --success: #22c55e;
+
+  /* Shadows & radii */
+  --card-shadow: 0 20px 60px rgba(15, 27, 64, 0.08);
+  --card-radius: 24px;
+
   /* Typography */
   --font-primary: 'Inknut Antiqua', serif;
   --font-secondary: 'Inder', sans-serif;
@@ -31,7 +49,7 @@ body {
   font-family: var(--font-secondary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--white);
+  background: linear-gradient(180deg, var(--gray-50) 0%, var(--gray-100) 100%);
   color: var(--black);
 }
 
@@ -61,4 +79,5 @@ ul {
 
 #root {
   min-height: 100vh;
+  background-color: transparent;
 }
