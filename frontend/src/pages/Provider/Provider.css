@@ -225,3 +225,14 @@
     flex-direction: column;
   }
 }
+
+@media (max-width: 1024px) {
+  .provider-page {
+    flex-direction: column;
+  }
+
+  .provider-content {
+    margin-left: 0;
+    padding: 32px 24px;
+  }
+}

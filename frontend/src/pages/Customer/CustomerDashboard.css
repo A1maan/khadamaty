@@ -184,3 +184,14 @@
     flex-direction: column;
   }
 }
+
+@media (max-width: 1024px) {
+  .customer-dashboard {
+    flex-direction: column;
+  }
+
+  .dashboard-content {
+    margin-left: 0;
+    padding: 32px 24px;
+  }
+}

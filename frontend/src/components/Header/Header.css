@@ -22,6 +22,23 @@
   align-items: center;
 }
 
+.menu-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 27, 64, 0.12);
+  background: rgba(15, 27, 64, 0.02);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.menu-toggle ion-icon {
+  font-size: 22px;
+  color: var(--brand-navy);
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -85,6 +102,7 @@
   position: relative;
   padding-bottom: 4px;
   transition: color 0.2s ease;
+  display: inline-block;
 }
 
 .nav-link::after {
@@ -145,5 +163,51 @@
   .btn-signup {
     font-size: 12px;
     padding: 8px 18px;
+  }
+}
+
+@media (max-width: 900px) {
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  .nav {
+    position: absolute;
+    top: 90px;
+    right: 20px;
+    left: 20px;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    background: var(--surface-card);
+    border-radius: 20px;
+    border: 1px solid var(--surface-border);
+    box-shadow: var(--card-shadow);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-12px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .nav.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .theme-toggle,
+  .btn-signup,
+  .nav-link {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .theme-toggle {
+    border-radius: 12px;
+  }
+
+  .nav-link::after {
+    display: none;
   }
 }

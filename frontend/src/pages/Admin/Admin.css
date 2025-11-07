@@ -208,3 +208,14 @@
     width: 100%;
   }
 }
+
+@media (max-width: 1024px) {
+  .admin-page {
+    flex-direction: column;
+  }
+
+  .admin-content {
+    margin-left: 0;
+    padding: 32px 24px;
+  }
+}

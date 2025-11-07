@@ -56,3 +56,13 @@
   font-size: 18px;
   margin-bottom: 10px;
 }
+
+@media (max-width: 768px) {
+  .static-main {
+    padding: 40px 18px 80px;
+  }
+
+  .static-grid {
+    grid-template-columns: 1fr;
+  }
+}

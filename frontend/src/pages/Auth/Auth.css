@@ -303,3 +303,18 @@
     padding: 40px 16px 80px;
   }
 }
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 28px 20px;
+  }
+
+  .selection-container {
+    gap: 20px;
+  }
+
+  .btn-submit,
+  .btn-continue {
+    width: 100%;
+  }
+}

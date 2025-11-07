@@ -160,20 +160,32 @@
     width: 100%;
     height: auto;
     position: relative;
-    padding: 20px;
+    padding: 16px;
     box-shadow: none;
-    border-bottom-left-radius: 24px;
-    border-bottom-right-radius: 24px;
+    border-radius: 0 0 24px 24px;
   }
 
-  .sidebar-nav,
+  .sidebar-nav {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .sidebar-link {
+    flex: 0 0 auto;
+    min-width: 150px;
+  }
+
   .sidebar-controls {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
-  .sidebar-link,
   .sidebar-control {
-    flex: unset;
+    flex: 1 1 calc(50% - 8px);
   }
 
   .sidebar-profile {
