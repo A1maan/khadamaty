@@ -8,7 +8,8 @@ const Sidebar = ({ userType = 'customer' }) => {
   const { theme, toggleTheme } = useTheme()
 
   const customerNav = [
-    { path: '/customer/dashboard', label: 'Browse', active: true },
+    { path: '/customer/dashboard', label: 'Home' },
+    { path: '/customer/browse', label: 'Browse Services' },
     { path: '/customer/active', label: 'Active Requests' },
     { path: '/customer/past', label: 'Past Requests' },
     { path: '/customer/saved', label: 'Saved' },

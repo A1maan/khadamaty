@@ -14,6 +14,9 @@ import CustomerDashboard from './pages/Customer/CustomerDashboard'
 import CustomerActive from './pages/Customer/CustomerActive'
 import CustomerPast from './pages/Customer/CustomerPast'
 import CustomerSaved from './pages/Customer/CustomerSaved'
+import CustomerBrowse from './pages/Customer/CustomerBrowse'
+import CustomerBrowseFilter from './pages/Customer/CustomerBrowseFilter'
+import CustomerBooking from './pages/Customer/CustomerBooking'
 import AdminDashboard from './pages/Admin/AdminDashboard'
 import AdminUsers from './pages/Admin/AdminUsers'
 import ProviderServices from './pages/Provider/ProviderServices'
@@ -31,12 +34,17 @@ function App() {
         <Route path="/signup/provider" element={<SignUpProvider />} />
         <Route path="/signup/selection" element={<SignUpSelection />} />
         <Route path="/signup/verify" element={<OTPVerification />} />
-        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signin" element={<SignIn role="customer" />} />
+        <Route path="/signin/provider" element={<SignIn role="provider" />} />
+        <Route path="/signin/admin" element={<SignIn role="admin" />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/help" element={<HelpPage />} />
         
         {/* Customer Routes */}
         <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+        <Route path="/customer/browse" element={<CustomerBrowse />} />
+        <Route path="/customer/browse/filter" element={<CustomerBrowseFilter />} />
+        <Route path="/customer/booking/:providerId" element={<CustomerBooking />} />
         <Route path="/customer/active" element={<CustomerActive />} />
         <Route path="/customer/past" element={<CustomerPast />} />
         <Route path="/customer/saved" element={<CustomerSaved />} />

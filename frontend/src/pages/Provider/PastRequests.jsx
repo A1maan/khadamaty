@@ -1,57 +1,43 @@
 import Sidebar from '../../components/Sidebar/Sidebar'
+import { pastRequests } from '../../data/providerData'
 import './Provider.css'
 
-const PastRequests = () => {
-  const requests = [
-    {
-      id: 1,
-      service: 'Service Name',
-      customer: 'Customer Name',
-      date: 'XX/XX/XXXX',
-      timeslot: 'XX:XX',
-      status: 'Completed'
-    },
-    {
-      id: 2,
-      service: 'Service Name',
-      customer: 'Customer Name',
-      date: 'XX/XX/XXXX',
-      timeslot: 'XX:XX',
-      status: 'Cancelled'
-    },
-  ]
-
-  return (
-    <div className="provider-page">
-      <Sidebar userType="provider" />
-      
-      <main className="provider-content">
-        <div className="provider-header">
+const PastRequests = () => (
+  <div className="provider-page">
+    <Sidebar userType="provider" />
+    
+    <main className="provider-content">
+      <div className="provider-header">
+        <div>
+          <p className="eyebrow">History</p>
           <h2>Past Requests</h2>
-          <div className="search-bar">
-            <ion-icon name="search-outline"></ion-icon>
-            <input type="text" placeholder="search ..." />
-          </div>
         </div>
+        <div className="search-bar">
+          <ion-icon name="search-outline"></ion-icon>
+          <input type="text" placeholder="Search past requests" />
+        </div>
+      </div>
 
-        <div className="requests-grid">
-          {requests.map((request) => (
-            <div key={request.id} className="request-card">
-              <ion-icon name="person-circle-outline" className="request-avatar"></ion-icon>
-              
-              <div className="request-info">
-                <h3>{request.service}</h3>
-                <p>{request.customer}</p>
-                <p>Date: {request.date}</p>
-                <p>Timeslot: {request.timeslot}</p>
-                <p>Status: {request.status}</p>
+      <section className="provider-cards">
+        {pastRequests.map((request) => (
+          <article key={request.id} className="request-card">
+            <div className="request-header">
+              <div>
+                <h3>{request.customer}</h3>
+                <p>{request.service}</p>
               </div>
+              <span className={`status-pill ${request.status.toLowerCase()}`}>
+                {request.status}
+              </span>
             </div>
-          ))}
-        </div>
-      </main>
-    </div>
-  )
-}
+            <div className="request-meta">
+              <span>Date: {request.date}</span>
+            </div>
+          </article>
+        ))}
+      </section>
+    </main>
+  </div>
+)
 
 export default PastRequests

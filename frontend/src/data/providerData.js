@@ -1,0 +1,135 @@
+export const myServices = [
+  {
+    id: 'svc-001',
+    icon: 'construct-outline',
+    name: 'Plumbing Rescue',
+    description: 'Emergency repairs and fixture replacements across Riyadh.',
+    pricing: 'Starts at SAR 150',
+    status: 'Active',
+    updated: '2 days ago',
+  },
+  {
+    id: 'svc-002',
+    icon: 'bed-outline',
+    name: 'CozyHome Clean',
+    description: 'Deep cleaning, upholstery refresh, and laundry bundles.',
+    pricing: 'Packages from SAR 199',
+    status: 'Active',
+    updated: '5 days ago',
+  },
+  {
+    id: 'svc-003',
+    icon: 'camera-outline',
+    name: 'Pixel Stories',
+    description: 'Event, lifestyle, and studio photography services.',
+    pricing: 'SAR 600 / session',
+    status: 'Paused',
+    updated: '1 week ago',
+  },
+  {
+    id: 'svc-004',
+    icon: 'car-outline',
+    name: 'RoadReady Mobile',
+    description: 'On-site detailing and routine maintenance for sedans & SUVs.',
+    pricing: 'Starts at SAR 250',
+    status: 'Draft',
+    updated: 'Just now',
+  },
+]
+
+export const pendingRequests = [
+  {
+    id: 'req-301',
+    customer: 'Khalid Al-Salim',
+    service: 'Plumbing Rescue',
+    date: '14 Feb 2025',
+    timeslot: '05:00 PM',
+    notes: 'Kitchen sink leak worsening.',
+  },
+  {
+    id: 'req-302',
+    customer: 'Maryam Al-Harbi',
+    service: 'CozyHome Clean',
+    date: '15 Feb 2025',
+    timeslot: '09:00 AM',
+    notes: 'Need deep clean before hosting.',
+  },
+  {
+    id: 'req-303',
+    customer: 'Fahad Al-Qahtani',
+    service: 'Pixel Stories',
+    date: '18 Feb 2025',
+    timeslot: '07:30 PM',
+    notes: 'Corporate dinner coverage.',
+  },
+]
+
+export const activeRequests = [
+  {
+    id: 'req-210',
+    customer: 'Laila Al-Dossary',
+    service: 'CozyHome Clean',
+    date: 'Today',
+    timeslot: '01:30 PM',
+    status: 'In Progress',
+  },
+  {
+    id: 'req-211',
+    customer: 'Omar Al-Jasser',
+    service: 'Plumbing Rescue',
+    date: 'Tomorrow',
+    timeslot: '08:00 AM',
+    status: 'Confirmed',
+  },
+]
+
+export const pastRequests = [
+  {
+    id: 'req-120',
+    customer: 'Maha Al-Harthi',
+    service: 'Pixel Stories',
+    date: '05 Feb 2025',
+    status: 'Completed',
+  },
+  {
+    id: 'req-121',
+    customer: 'Hamad Al-Mutairi',
+    service: 'RoadReady Mobile',
+    date: '28 Jan 2025',
+    status: 'Cancelled',
+  },
+  {
+    id: 'req-122',
+    customer: 'Sara Al-Otaibi',
+    service: 'CozyHome Clean',
+    date: '20 Jan 2025',
+    status: 'Declined',
+  },
+]
+
+export const providerReviews = [
+  {
+    id: 'rev-01',
+    customer: 'Huda Al-Fahad',
+    service: 'CozyHome Clean',
+    rating: 5,
+    date: '10 Feb 2025',
+    comment: 'Spotless work, punctual team, and friendly communication.',
+  },
+  {
+    id: 'rev-02',
+    customer: 'Raed Al-Saif',
+    service: 'Plumbing Rescue',
+    rating: 4,
+    date: '02 Feb 2025',
+    comment: 'Quick diagnosis and fix, could improve cleanup afterward.',
+  },
+  {
+    id: 'rev-03',
+    customer: 'Nourah Al-Shammari',
+    service: 'Pixel Stories',
+    rating: 5,
+    date: '22 Jan 2025',
+    comment: 'Captured every moment beautifully—highly recommended.',
+  },
+]

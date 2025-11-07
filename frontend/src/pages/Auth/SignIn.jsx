@@ -1,11 +1,38 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './Auth.css'
 
-const SignIn = () => {
+const configByRole = {
+  customer: {
+    title: 'Welcome Back',
+    description: 'Sign in to continue managing your requests and bookings.',
+    redirect: '/customer/dashboard',
+  },
+  provider: {
+    title: 'Provider Login',
+    description: 'Access your services, requests, and reviews.',
+    redirect: '/provider/services',
+  },
+  admin: {
+    title: 'Admin Console',
+    description: 'Secure Khadamaty operations access.',
+    redirect: '/admin/dashboard',
+  },
+}
+
+const SignIn = ({ role = 'customer' }) => {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({ email: '', password: '' })
+  const config = useMemo(() => configByRole[role] ?? configByRole.customer, [role])
+  const headerProps =
+    role === 'admin'
+      ? { showSignUp: false }
+      : {
+          showSignUp: true,
+          signUpText: 'Sign Up',
+          signUpLink: role === 'provider' ? '/signup/provider' : '/signup',
+        }
 
   const handleChange = (e) => {
     setFormData({
@@ -16,20 +43,18 @@ const SignIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    navigate('/customer/dashboard')
+    navigate(config.redirect)
   }
 
   return (
     <div className="auth-page">
-      <Header showSignUp={false} />
+      <Header {...headerProps} />
       
       <main className="auth-main">
         <div className="auth-container">
           <div className="auth-card">
-            <h2>Welcome Back</h2>
-            <p className="auth-description">
-              Sign in to continue managing your requests and bookings.
-            </p>
+            <h2>{config.title}</h2>
+            <p className="auth-description">{config.description}</p>
 
             <form className="auth-form" onSubmit={handleSubmit}>
               <div className="form-group">

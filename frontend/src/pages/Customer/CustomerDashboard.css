@@ -77,11 +77,46 @@
   margin-bottom: 60px;
 }
 
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.section-heading h2 {
+  margin: 0;
+}
+
+.eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gray-text);
+  margin-bottom: 4px;
+}
+
+.link-inline,
+.btn-secondary-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand-indigo);
+}
+
+.link-inline ion-icon {
+  font-size: 16px;
+}
+
 .services-section h2,
 .featured-section h2 {
   font-family: var(--font-primary);
   font-size: 32px;
-  margin-bottom: 30px;
   color: var(--brand-navy);
 }
 
@@ -95,7 +130,7 @@
   background: var(--surface-card);
   border-radius: 24px;
   padding: 32px 24px;
-  text-align: center;
+  text-align: left;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
   box-shadow: var(--card-shadow);
@@ -110,13 +145,19 @@
 .service-card ion-icon {
   font-size: 64px;
   color: var(--brand-indigo);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .service-card h3 {
   font-size: 18px;
   color: var(--brand-navy);
   letter-spacing: 0.02em;
+}
+
+.service-card p {
+  font-size: 15px;
+  color: var(--gray-text);
+  margin-top: 8px;
 }
 
 .providers-grid {
@@ -157,6 +198,13 @@
 .provider-info p {
   font-size: 16px;
   color: var(--gray-text);
+}
+
+.provider-info span {
+  font-size: 13px;
+  color: var(--gray-text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 @media (max-width: 1280px) {

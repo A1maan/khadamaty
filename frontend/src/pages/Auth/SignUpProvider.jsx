@@ -26,7 +26,7 @@ const SignUpProvider = () => {
 
   return (
     <div className="auth-page">
-      <Header showSignUp={true} signUpText="Sign IN" signUpLink="/signin" />
+      <Header showSignUp={true} signUpText="Sign IN" signUpLink="/signin/provider" />
       
       <main className="auth-main">
         <div className="auth-container">
@@ -94,7 +94,7 @@ const SignUpProvider = () => {
             </form>
 
             <p className="auth-footer">
-              Already with Khadamaty? <Link to="/signin">Sign In</Link>
+              Already with Khadamaty? <Link to="/signin/provider">Sign In</Link>
             </p>
           </div>
         </div>
