@@ -37,7 +37,7 @@ const SignUpSelection = () => {
             </p>
             <button 
               className="btn-continue"
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/signup/provider')}
             >
               CONTINUE
             </button>

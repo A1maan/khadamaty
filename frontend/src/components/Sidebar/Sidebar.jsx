@@ -1,8 +1,11 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTheme } from '../../ThemeContext'
 import './Sidebar.css'
 
 const Sidebar = ({ userType = 'customer' }) => {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { theme, toggleTheme } = useTheme()
 
   const customerNav = [
     { path: '/customer/dashboard', label: 'Browse', active: true },
@@ -28,6 +31,10 @@ const Sidebar = ({ userType = 'customer' }) => {
   if (userType === 'provider') navItems = providerNav
   if (userType === 'admin') navItems = adminNav
 
+  const handleLogout = () => {
+    navigate('/')
+  }
+
   return (
     <aside className="sidebar">
       <Link to="/" className="sidebar-logo">
@@ -45,6 +52,17 @@ const Sidebar = ({ userType = 'customer' }) => {
           </Link>
         ))}
       </nav>
+
+      <div className="sidebar-controls">
+        <button type="button" className="sidebar-control" onClick={toggleTheme}>
+          <ion-icon name={theme === 'dark' ? 'sunny-outline' : 'moon-outline'}></ion-icon>
+          <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+        </button>
+        <button type="button" className="sidebar-control logout" onClick={handleLogout}>
+          <ion-icon name="log-out-outline"></ion-icon>
+          <span>Logout</span>
+        </button>
+      </div>
 
       <Link to="/help" className="sidebar-help">
         Help & FAQs

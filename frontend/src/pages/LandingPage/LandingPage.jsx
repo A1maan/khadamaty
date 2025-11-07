@@ -39,7 +39,7 @@ const LandingPage = () => {
             </p>
             <div className="hero-actions">
               <Link to="/signup/selection" className="btn-primary">Get Started</Link>
-              <button type="button" className="btn-secondary">How it works</button>
+              <Link to="/about" className="btn-secondary">How it works</Link>
             </div>
             <div className="hero-stats">
               {stats.map((stat) => (
@@ -60,8 +60,8 @@ const LandingPage = () => {
               “Are you a service provider or customer?” Choose your path and unlock the right dashboard experience instantly.
             </p>
             <div className="panel-actions">
-              <Link to="/signup/selection">I&apos;m a customer</Link>
-              <Link to="/signup/selection">I&apos;m a provider</Link>
+              <Link to="/signup">I&apos;m a customer</Link>
+              <Link to="/signup/provider">I&apos;m a provider</Link>
             </div>
           </div>
         </section>

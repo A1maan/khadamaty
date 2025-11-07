@@ -1,5 +1,5 @@
 .header {
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--surface-overlay);
   backdrop-filter: blur(18px);
   width: 100%;
   height: 76px;
@@ -9,7 +9,7 @@
   top: 0;
   z-index: 1000;
   box-shadow: 0 10px 40px rgba(15, 27, 64, 0.08);
-  border-bottom: 1px solid rgba(15, 27, 64, 0.05);
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .header-container {
@@ -50,6 +50,29 @@
   display: flex;
   align-items: center;
   gap: 30px;
+}
+
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(15, 27, 64, 0.1);
+  background: rgba(15, 27, 64, 0.02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle ion-icon {
+  font-size: 20px;
+  color: var(--brand-navy);
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(15, 27, 64, 0.15);
 }
 
 .nav-link {

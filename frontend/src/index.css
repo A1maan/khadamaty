@@ -14,6 +14,19 @@
   --gray-300: #cfd8ea;
   --gray-500: #6b7280;
   --gray-700: #4b5563;
+  --surface-card: #ffffff;
+  --surface-muted: #f7f8fc;
+  --surface-overlay: rgba(255, 255, 255, 0.92);
+  --surface-border: rgba(15, 27, 64, 0.05);
+  --badge-background: rgba(15, 27, 64, 0.06);
+  --input-surface: #f8fafc;
+  --sidebar-bg: linear-gradient(180deg, rgba(247, 248, 252, 0.98) 0%, rgba(229, 237, 255, 0.95) 55%, rgba(42, 77, 208, 0.85) 100%);
+  --sidebar-surface: rgba(15, 27, 64, 0.06);
+  --sidebar-surface-strong: rgba(42, 77, 208, 0.18);
+  --sidebar-border: rgba(15, 27, 64, 0.08);
+  --sidebar-text: #0f172a;
+  --sidebar-text-muted: rgba(15, 23, 42, 0.7);
+  --sidebar-shadow: 20px 0 60px rgba(15, 27, 64, 0.12);
 
   /* Legacy tokens mapped to new palette */
   --gray-light: var(--gray-100);
@@ -22,7 +35,7 @@
   --gray-border: var(--gray-300);
   --gray-text: var(--gray-700);
   --gray-bg: var(--gray-50);
-  --gray-card: #ffffff;
+  --gray-card: var(--surface-card);
   --primary: var(--brand-indigo);
   --primary-dark: var(--brand-indigo-dark);
   --accent: var(--brand-teal);
@@ -39,6 +52,37 @@
   --font-tertiary: 'Inclusive Sans', sans-serif;
 }
 
+[data-theme='dark'] {
+  --white: #0b1221;
+  --black: #f8fafc;
+  --brand-navy: #e0e7ff;
+  --brand-indigo: #93a5ff;
+  --brand-indigo-dark: #7c8ffc;
+  --brand-teal: #2dd4bf;
+  --brand-sun: #f7b267;
+  --brand-rose: #fb7185;
+  --gray-50: #050914;
+  --gray-100: #0f172a;
+  --gray-200: #1e293b;
+  --gray-300: #334155;
+  --gray-500: #94a3b8;
+  --gray-700: #cbd5f5;
+  --surface-card: #101828;
+  --surface-muted: #0b1221;
+  --surface-overlay: rgba(9, 13, 25, 0.92);
+  --surface-border: rgba(255, 255, 255, 0.12);
+  --badge-background: rgba(255, 255, 255, 0.12);
+  --input-surface: #0f172a;
+  --sidebar-bg: linear-gradient(180deg, rgba(5, 9, 20, 0.95) 0%, rgba(15, 27, 64, 0.92) 55%, rgba(42, 77, 208, 0.75) 100%);
+  --sidebar-surface: rgba(255, 255, 255, 0.08);
+  --sidebar-surface-strong: rgba(255, 255, 255, 0.16);
+  --sidebar-border: rgba(255, 255, 255, 0.18);
+  --sidebar-text: #f8fafc;
+  --sidebar-text-muted: rgba(248, 250, 252, 0.65);
+  --sidebar-shadow: 20px 0 60px rgba(5, 9, 20, 0.45);
+  --card-shadow: 0 20px 60px rgba(5, 9, 20, 0.65);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -51,6 +95,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(180deg, var(--gray-50) 0%, var(--gray-100) 100%);
   color: var(--black);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {

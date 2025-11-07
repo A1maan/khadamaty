@@ -18,13 +18,13 @@
 }
 
 .auth-card {
-  background-color: var(--white);
+  background-color: var(--surface-card);
   border-radius: 32px;
   padding: 56px 60px;
   width: 100%;
   max-width: 540px;
   box-shadow: var(--card-shadow);
-  border: 1px solid rgba(15, 27, 64, 0.06);
+  border: 1px solid var(--surface-border);
 }
 
 .auth-card h2 {
@@ -63,8 +63,8 @@
 }
 
 .form-group input {
-  background-color: #f8fafc;
-  border: 1px solid rgba(15, 27, 64, 0.15);
+  background-color: var(--input-surface);
+  border: 1px solid var(--surface-border);
   border-radius: 18px;
   padding: 16px 20px;
   font-size: 16px;
@@ -145,11 +145,11 @@
 }
 
 .selection-card {
-  background-color: #ffffff;
+  background-color: var(--surface-card);
   border-radius: 28px;
   padding: 36px;
   text-align: left;
-  border: 1px solid rgba(15, 27, 64, 0.08);
+  border: 1px solid var(--surface-border);
   box-shadow: var(--card-shadow);
 }
 
@@ -200,12 +200,12 @@
 }
 
 .otp-card {
-  background-color: var(--white);
+  background-color: var(--surface-card);
   border-radius: 32px;
   padding: 48px;
   max-width: 640px;
   box-shadow: var(--card-shadow);
-  border: 1px solid rgba(15, 27, 64, 0.06);
+  border: 1px solid var(--surface-border);
 }
 
 .otp-card h2 {
@@ -238,13 +238,13 @@
 .otp-input {
   width: 68px;
   height: 78px;
-  border: 1px solid rgba(15, 27, 64, 0.15);
+  border: 1px solid var(--surface-border);
   border-radius: 18px;
   text-align: center;
   font-size: 28px;
   font-weight: 600;
   color: var(--brand-navy);
-  background-color: #f8fafc;
+  background-color: var(--input-surface);
 }
 
 .resend-text {

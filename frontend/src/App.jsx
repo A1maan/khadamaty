@@ -4,9 +4,16 @@ import './App.css'
 // Pages
 import LandingPage from './pages/LandingPage/LandingPage'
 import SignUpCustomer from './pages/Auth/SignUpCustomer'
+import SignUpProvider from './pages/Auth/SignUpProvider'
 import SignUpSelection from './pages/Auth/SignUpSelection'
+import SignIn from './pages/Auth/SignIn'
 import OTPVerification from './pages/Auth/OTPVerification'
+import AboutPage from './pages/AboutPage'
+import HelpPage from './pages/HelpPage'
 import CustomerDashboard from './pages/Customer/CustomerDashboard'
+import CustomerActive from './pages/Customer/CustomerActive'
+import CustomerPast from './pages/Customer/CustomerPast'
+import CustomerSaved from './pages/Customer/CustomerSaved'
 import AdminDashboard from './pages/Admin/AdminDashboard'
 import AdminUsers from './pages/Admin/AdminUsers'
 import ProviderServices from './pages/Provider/ProviderServices'
@@ -21,11 +28,18 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUpCustomer />} />
+        <Route path="/signup/provider" element={<SignUpProvider />} />
         <Route path="/signup/selection" element={<SignUpSelection />} />
         <Route path="/signup/verify" element={<OTPVerification />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/help" element={<HelpPage />} />
         
         {/* Customer Routes */}
         <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+        <Route path="/customer/active" element={<CustomerActive />} />
+        <Route path="/customer/past" element={<CustomerPast />} />
+        <Route path="/customer/saved" element={<CustomerSaved />} />
         
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />

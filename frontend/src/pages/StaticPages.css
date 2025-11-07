@@ -1,0 +1,58 @@
+.static-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--gray-50) 0%, var(--gray-100) 100%);
+}
+
+.static-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 24px 120px;
+}
+
+.static-hero {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.static-hero .eyebrow {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--brand-teal);
+  margin-bottom: 12px;
+}
+
+.static-hero h1 {
+  font-family: var(--font-primary);
+  font-size: 44px;
+  color: var(--brand-navy);
+  margin-bottom: 16px;
+}
+
+.static-hero .lead {
+  font-size: 18px;
+  color: var(--gray-text);
+  line-height: 1.7;
+}
+
+.static-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.static-card {
+  background-color: var(--surface-card);
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--card-shadow);
+  color: var(--brand-navy);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.static-card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
