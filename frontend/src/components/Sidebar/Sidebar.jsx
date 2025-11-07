@@ -38,7 +38,10 @@ const Sidebar = ({ userType = 'customer' }) => {
   return (
     <aside className="sidebar">
       <Link to="/" className="sidebar-logo">
-        Khadamaty
+        <span className="sidebar-logo-mark">
+          <ion-icon name="thumbs-up-sharp"></ion-icon>
+        </span>
+        <span>Khadamaty</span>
       </Link>
 
       <nav className="sidebar-nav">

@@ -16,11 +16,30 @@
 
 .sidebar-logo {
   font-family: var(--font-primary);
-  font-size: 30px;
+  font-size: 28px;
   text-align: left;
-  color: var(--sidebar-text);
+  color: var(--brand-navy);
   margin-bottom: 40px;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-logo-mark {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(20, 184, 166, 0.2), rgba(42, 77, 208, 0.1));
+  flex-shrink: 0;
+}
+
+.sidebar-logo-mark ion-icon {
+  font-size: 26px;
+  color: var(--brand-teal);
 }
 
 .sidebar-nav {
