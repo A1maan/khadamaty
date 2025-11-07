@@ -1,0 +1,128 @@
+.landing-page {
+  min-height: 100vh;
+  background-color: var(--white);
+}
+
+.landing-main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.hero {
+  text-align: center;
+  padding: 60px 20px 80px;
+  position: relative;
+}
+
+.hero-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.hero-icon ion-icon {
+  font-size: 120px;
+  color: var(--black);
+}
+
+.hero-title {
+  font-family: var(--font-primary);
+  font-size: 100px;
+  font-weight: 400;
+  margin: 20px 0;
+  color: var(--black);
+}
+
+.hero-subtitle {
+  font-family: var(--font-primary);
+  font-size: 28px;
+  color: var(--black);
+  margin-top: 40px;
+}
+
+.features {
+  background-color: var(--gray-bg);
+  padding: 60px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 50px;
+  border-radius: 20px;
+}
+
+.feature-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 55%, rgba(153, 153, 153, 1) 100%);
+  border: 1px solid var(--black);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+}
+
+.feature-card h3 {
+  font-family: var(--font-primary);
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: var(--black);
+}
+
+.feature-card p {
+  font-family: var(--font-primary);
+  font-size: 20px;
+  line-height: 1.6;
+  color: var(--black);
+}
+
+.feature-placeholder {
+  width: 100px;
+  height: 100px;
+  background-color: var(--gray-light);
+  margin: 20px auto;
+  border-radius: 8px;
+}
+
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 70px;
+  }
+
+  .hero-subtitle {
+    font-size: 24px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 50px;
+  }
+
+  .hero-subtitle {
+    font-size: 20px;
+  }
+
+  .hero-icon ion-icon {
+    font-size: 80px;
+  }
+
+  .features {
+    padding: 30px 20px;
+  }
+
+  .feature-card {
+    padding: 20px;
+  }
+
+  .feature-card h3 {
+    font-size: 18px;
+  }
+
+  .feature-card p {
+    font-size: 16px;
+  }
+}

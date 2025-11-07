@@ -1,0 +1,216 @@
+.admin-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-content {
+  margin-left: 276px;
+  padding: 40px;
+  flex: 1;
+  background-color: var(--white);
+}
+
+/* Approvals Section */
+.approvals-section {
+  margin-bottom: 60px;
+}
+
+.approvals-section h2 {
+  font-family: var(--font-primary);
+  font-size: 30px;
+  margin-bottom: 30px;
+  color: var(--black);
+}
+
+.approvals-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 900px;
+}
+
+.approval-card {
+  background-color: var(--gray-card);
+  border-radius: 15px;
+  padding: 20px 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.approval-card ion-icon:first-child {
+  font-size: 41px;
+  color: var(--black);
+}
+
+.approval-info {
+  flex: 1;
+}
+
+.approval-info h4 {
+  font-size: 20px;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+
+.btn-view {
+  background-color: transparent;
+  color: var(--black);
+  font-size: 14px;
+  text-decoration: underline;
+  transition: opacity 0.3s;
+}
+
+.btn-view:hover {
+  opacity: 0.7;
+}
+
+.approval-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-approve,
+.btn-reject {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  background-color: var(--white);
+}
+
+.btn-approve ion-icon,
+.btn-reject ion-icon {
+  font-size: 30px;
+}
+
+.btn-approve ion-icon {
+  color: var(--success);
+}
+
+.btn-reject ion-icon {
+  color: var(--error);
+}
+
+.btn-approve:hover,
+.btn-reject:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Providers Section */
+.providers-section h2 {
+  font-family: var(--font-primary);
+  font-size: 30px;
+  margin-bottom: 30px;
+  color: var(--black);
+}
+
+.providers-list {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.provider-item {
+  background-color: var(--gray-card);
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 240px;
+}
+
+.provider-item ion-icon {
+  font-size: 41px;
+  color: var(--black);
+}
+
+.provider-details h4 {
+  font-size: 20px;
+  color: var(--black);
+  margin-bottom: 5px;
+}
+
+.provider-details p {
+  font-size: 20px;
+  color: var(--black);
+}
+
+/* Users Section */
+.users-section h2 {
+  font-family: var(--font-primary);
+  font-size: 30px;
+  margin-bottom: 30px;
+  color: var(--black);
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.user-card {
+  background-color: var(--gray-card);
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-card ion-icon {
+  font-size: 41px;
+  color: var(--black);
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-info h4 {
+  font-size: 20px;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+.status-badge {
+  display: inline-block;
+  background-color: var(--white);
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.status-badge.activated {
+  color: var(--success);
+}
+
+.status-badge.deactivated {
+  color: var(--error);
+}
+
+@media (max-width: 768px) {
+  .admin-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .providers-list {
+    flex-direction: column;
+  }
+
+  .provider-item {
+    width: 100%;
+  }
+}

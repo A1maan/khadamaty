@@ -1,0 +1,64 @@
+:root {
+  /* Colors from Figma design */
+  --white: #FFFFFF;
+  --black: #000000;
+  --gray-light: #F1F1F1;
+  --gray-medium: #C9C3C3;
+  --gray-dark: #979595;
+  --gray-border: #C9CFDA;
+  --gray-text: #B0BAC9;
+  --gray-bg: #CAC8C8;
+  --gray-card: #EDEDED;
+  --primary: #9D9D9D;
+  --primary-dark: #908C8C;
+  --accent: #A7A7A7;
+  --error: #EE0202;
+  --success: #5FD855;
+  
+  /* Typography */
+  --font-primary: 'Inknut Antiqua', serif;
+  --font-secondary: 'Inder', sans-serif;
+  --font-tertiary: 'Inclusive Sans', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--white);
+  color: var(--black);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+}
+
+button {
+  font-family: var(--font-secondary);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input, textarea, select {
+  font-family: var(--font-secondary);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+#root {
+  min-height: 100vh;
+}
