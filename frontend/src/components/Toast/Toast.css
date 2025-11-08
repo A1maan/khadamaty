@@ -1,0 +1,33 @@
+.toast-banner {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--brand-navy);
+  color: var(--white);
+  padding: 14px 20px;
+  border-radius: 16px;
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  box-shadow: 0 20px 35px rgba(15, 27, 64, 0.3);
+  z-index: 50;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.toast-banner button {
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  cursor: pointer;
+}
+
+.toast-banner button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

@@ -1,3 +1,4 @@
+/* about screen highlighting what khadamaty does */
 import Header from '../components/Header/Header'
 import './StaticPages.css'
 

@@ -7,6 +7,10 @@ export const myServices = [
     pricing: 'Starts at SAR 150',
     status: 'Active',
     updated: '2 days ago',
+    category: 'plumbing',
+    coverage: 'Riyadh Metro Area',
+    availability: 'Within 2 hours',
+    responseTime: '1 hr average',
   },
   {
     id: 'svc-002',
@@ -16,6 +20,10 @@ export const myServices = [
     pricing: 'Packages from SAR 199',
     status: 'Active',
     updated: '5 days ago',
+    category: 'home',
+    coverage: 'North & Central Riyadh',
+    availability: 'Tomorrow AM',
+    responseTime: '3 hrs average',
   },
   {
     id: 'svc-003',
@@ -25,6 +33,10 @@ export const myServices = [
     pricing: 'SAR 600 / session',
     status: 'Paused',
     updated: '1 week ago',
+    category: 'photography',
+    coverage: 'Riyadh + Dammam',
+    availability: 'Next week',
+    responseTime: '6 hrs average',
   },
   {
     id: 'svc-004',
@@ -34,6 +46,10 @@ export const myServices = [
     pricing: 'Starts at SAR 250',
     status: 'Draft',
     updated: 'Just now',
+    category: 'car',
+    coverage: 'Riyadh & Al Khobar',
+    availability: 'Weekends',
+    responseTime: 'Same-day slots',
   },
 ]
 

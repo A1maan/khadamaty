@@ -1,3 +1,4 @@
+/* help center page with simple faq grid */
 import Header from '../components/Header/Header'
 import './StaticPages.css'
 

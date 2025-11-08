@@ -1,35 +1,31 @@
-/* this sign up form is the customer version with password mismatch handling */
+/* this error screen lets customers correct mismatched passwords */
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './Auth.css'
 
-const SignUpCustomer = () => {
-  const navigate = useNavigate()
+const SignUpCustomerError = () => {
   const location = useLocation()
-  const statePrefill = location.state ?? {}
+  const navigate = useNavigate()
+  const defaults = location.state ?? {}
   const [formData, setFormData] = useState({
-    email: statePrefill.email ?? '',
-    mobile: statePrefill.mobile ?? '',
-    password: statePrefill.password ?? '',
-    confirmPassword: statePrefill.confirmPassword ?? '',
+    email: defaults.email ?? '',
+    mobile: defaults.mobile ?? '',
+    password: '',
+    confirmPassword: '',
   })
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     })
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // bounce to the error screen so users see the figma-style mismatch message
-    if (formData.password !== formData.confirmPassword) {
-      navigate('/signup/customer/error', { state: { email: formData.email, mobile: formData.mobile } })
-      return
-    }
-    navigate('/signup/verify')
+  const mismatch = formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword
+
+  const handleRetry = () => {
+    navigate('/signup', { state: { ...formData } })
   }
 
   return (
@@ -39,12 +35,12 @@ const SignUpCustomer = () => {
       <main className="auth-main">
         <div className="auth-container">
           <div className="auth-card">
-            <h2>Welcome to Khadamaty</h2>
-            <p className="auth-description">
-              Sign up to access our services and connect with professional service providers.
+            <h2>Password Error</h2>
+            <p className="auth-description error-text">
+              The passwords you entered do not match. Please re-enter to continue.
             </p>
             
-            <form className="auth-form" onSubmit={handleSubmit}>
+            <form className="auth-form">
               <div className="form-group">
                 <label>Email Address</label>
                 <input
@@ -53,7 +49,6 @@ const SignUpCustomer = () => {
                   placeholder="example@domain.com"
                   value={formData.email}
                   onChange={handleChange}
-                  required
                 />
               </div>
 
@@ -67,12 +62,11 @@ const SignUpCustomer = () => {
                     placeholder="5x xxx xxxx"
                     value={formData.mobile}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className={`form-group ${mismatch ? 'has-error' : ''}`}>
                 <label>Password</label>
                 <input
                   type="password"
@@ -80,11 +74,10 @@ const SignUpCustomer = () => {
                   placeholder="*****************"
                   value={formData.password}
                   onChange={handleChange}
-                  required
                 />
               </div>
 
-              <div className="form-group">
+              <div className={`form-group ${mismatch ? 'has-error' : ''}`}>
                 <label>Confirm Password</label>
                 <input
                   type="password"
@@ -92,18 +85,14 @@ const SignUpCustomer = () => {
                   placeholder="*****************"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  required
                 />
+                {mismatch && <span className="error-inline">Passwords do not match.</span>}
               </div>
 
-              <button type="submit" className="btn-submit">
-                Sign UP
+              <button type="button" className="btn-submit" onClick={handleRetry}>
+                Try Again
               </button>
             </form>
-
-            <p className="auth-footer">
-              Already have an Account? <Link to="/signin">Sign In</Link>
-            </p>
           </div>
         </div>
       </main>
@@ -111,4 +100,4 @@ const SignUpCustomer = () => {
   )
 }
 
-export default SignUpCustomer
+export default SignUpCustomerError

@@ -1,3 +1,4 @@
+/* theme context toggles between light and dark for the whole app */
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 const ThemeContext = createContext({

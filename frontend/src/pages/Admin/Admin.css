@@ -182,12 +182,64 @@
   margin-top: 6px;
 }
 
-.status-badge.activated {
+.status-badge.activated,
+.status-badge.active {
   color: var(--success);
 }
 
 .status-badge.deactivated {
   color: var(--error);
+}
+
+.status-badge.pending {
+  color: var(--brand-indigo);
+}
+
+.status-badge.warned {
+  color: #f59e0b;
+}
+
+.status-badge.suspended {
+  color: #dc2626;
+}
+
+.detail-panel {
+  border-top: 1px dashed var(--surface-border);
+  margin-top: 40px;
+  padding-top: 24px;
+}
+
+.panel-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.detail-panel select {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-card);
+  color: var(--brand-navy);
+}
+
+@media (max-width: 900px) {
+  .panel-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .panel-actions .btn-primary-solid,
+  .panel-actions .btn-ghost,
+  .panel-actions .btn-secondary-link {
+    width: 100%;
+    text-align: center;
+  }
+
+  .detail-panel select {
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {

@@ -1,3 +1,4 @@
+/* otp screen to mimic verifying email or phone */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'

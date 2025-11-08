@@ -230,6 +230,15 @@
 
   .dashboard-banner {
     flex-direction: column;
+    gap: 16px;
+  }
+
+  .dashboard-banner .search-bar {
+    width: 100%;
+  }
+
+  .btn-filter {
+    width: 100%;
   }
 }
 

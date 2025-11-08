@@ -1,15 +1,19 @@
+/* provider sign up mirrors the customer form but with biz details */
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './Auth.css'
 
 const SignUpProvider = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const statePrefill = location.state ?? {}
   const [formData, setFormData] = useState({
-    businessName: '',
-    email: '',
-    mobile: '',
-    password: '',
+    businessName: statePrefill.businessName ?? '',
+    email: statePrefill.email ?? '',
+    mobile: statePrefill.mobile ?? '',
+    password: statePrefill.password ?? '',
+    confirmPassword: statePrefill.confirmPassword ?? '',
   })
 
   const handleChange = (e) => {
@@ -21,6 +25,11 @@ const SignUpProvider = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    // send the user to the tailored error page so copy matches figma
+    if (formData.password !== formData.confirmPassword) {
+      navigate('/signup/provider/error', { state: { businessName: formData.businessName } })
+      return
+    }
     navigate('/signup/verify')
   }
 
@@ -83,6 +92,18 @@ const SignUpProvider = () => {
                   name="password"
                   placeholder="*****************"
                   value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Confirm Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="*****************"
+                  value={formData.confirmPassword}
                   onChange={handleChange}
                   required
                 />

@@ -1,3 +1,4 @@
+/* router handoff so users pick customer or provider signup */
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './Auth.css'

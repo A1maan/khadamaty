@@ -1,3 +1,4 @@
+/* shared header with logo, theme toggle, nav links, and sign up button */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '../../ThemeContext'

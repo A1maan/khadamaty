@@ -1,3 +1,4 @@
+/* marketing landing with hero stats and ctas for customers/providers */
 import { Link } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './LandingPage.css'
@@ -26,7 +27,7 @@ const stats = [
 const LandingPage = () => {
   return (
     <div className="landing-page">
-      <Header showSignUp />
+      <Header showSignUp signUpLink="/signup/selection" />
       
       <main className="landing-main">
         <section className="hero">

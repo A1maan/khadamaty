@@ -1,23 +1,43 @@
-import { Link } from 'react-router-dom'
+/* customer home hub with search, featured pros, and quick category links */
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import { featuredProviders, serviceCategories } from '../../data/customerData'
 import './CustomerDashboard.css'
 
 const CustomerDashboard = () => {
+  const navigate = useNavigate()
+  const [query, setQuery] = useState('')
+
+  const handleSearch = (event) => {
+    // reuse the browse page filter logic by stuffing the term into the url
+    event.preventDefault()
+    const params = new URLSearchParams()
+    if (query.trim()) params.set('search', query.trim())
+    navigate(params.size ? `/customer/browse?${params.toString()}` : '/customer/browse')
+  }
+
+  const goToFilters = () => navigate('/customer/browse/filter')
+
   return (
     <div className="customer-dashboard">
       <Sidebar userType="customer" />
       
       <main className="dashboard-content">
-        <div className="dashboard-banner">
+        <form className="dashboard-banner" onSubmit={handleSearch}>
           <div className="search-bar">
             <ion-icon name="search-outline"></ion-icon>
-            <input type="text" placeholder="Search services, providers, etc." />
+            <input
+              type="text"
+              placeholder="Search services, providers, etc."
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
           </div>
-          <button className="btn-filter" aria-label="Filter">
+          <button type="button" className="btn-filter" aria-label="Filter" onClick={goToFilters}>
             <ion-icon name="filter-outline"></ion-icon>
           </button>
-        </div>
+        </form>
 
         <section className="featured-section">
           <div className="section-heading">
