@@ -1,13 +1,17 @@
 .provider-page {
-  display: flex;
+  display: grid;
+  grid-template-columns: 288px minmax(0, 1fr);
   min-height: 100vh;
+  width: min(100%, 100vw);
+  align-items: flex-start;
+  gap: 32px;
   background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+  overflow-x: hidden;
 }
 
 .provider-content {
-  margin-left: 288px;
   padding: 48px;
-  flex: 1;
+  min-width: 0;
 }
 
 .provider-header {
@@ -540,7 +544,6 @@
 
 @media (max-width: 768px) {
   .provider-content {
-    margin-left: 0;
     padding: 24px;
   }
 
@@ -571,11 +574,11 @@
 
 @media (max-width: 1024px) {
   .provider-page {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
   .provider-content {
-    margin-left: 0;
     padding: 32px 24px;
   }
 

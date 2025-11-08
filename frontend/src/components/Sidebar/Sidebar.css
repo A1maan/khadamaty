@@ -7,11 +7,13 @@
   flex-direction: column;
   align-items: stretch;
   padding: 32px 28px 36px;
-  position: fixed;
-  left: 0;
+  position: sticky;
   top: 0;
+  flex: 0 0 288px;
+  align-self: flex-start;
   box-shadow: var(--sidebar-shadow);
   overflow-y: auto;
+  z-index: 5;
 }
 
 .sidebar-logo {
@@ -151,7 +153,15 @@
 
 @media (max-width: 1024px) {
   .sidebar {
-    width: 240px;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    position: relative;
+    top: 0;
+    flex: 1 1 100%;
+    padding: 24px;
+    box-shadow: none;
+    border-radius: 0 0 24px 24px;
   }
 
   .sidebar-link {
@@ -165,6 +175,7 @@
     width: 100%;
     height: auto;
     position: relative;
+    flex: 1 1 100%;
     padding: 16px;
     box-shadow: none;
     border-radius: 0 0 24px 24px;

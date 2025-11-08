@@ -1,13 +1,17 @@
 .customer-dashboard {
-  display: flex;
+  display: grid;
+  grid-template-columns: 288px minmax(0, 1fr);
   min-height: 100vh;
+  width: min(100%, 100vw);
+  align-items: flex-start;
+  gap: 32px;
   background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+  overflow-x: hidden;
 }
 
 .dashboard-content {
-  margin-left: 288px;
   padding: 48px;
-  flex: 1;
+  min-width: 0;
 }
 
 .dashboard-banner {
@@ -219,7 +223,6 @@
 
 @media (max-width: 768px) {
   .dashboard-content {
-    margin-left: 0;
     padding: 24px;
   }
 
@@ -244,11 +247,11 @@
 
 @media (max-width: 1024px) {
   .customer-dashboard {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
   .dashboard-content {
-    margin-left: 0;
     padding: 32px 24px;
   }
 }
