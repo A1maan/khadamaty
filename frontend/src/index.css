@@ -27,6 +27,7 @@
   --sidebar-text: #0f172a;
   --sidebar-text-muted: rgba(15, 23, 42, 0.7);
   --sidebar-shadow: 20px 0 60px rgba(15, 27, 64, 0.12);
+  --sidebar-nav-fade: rgba(255, 255, 255, 0.9);
 
   /* Legacy tokens mapped to new palette */
   --gray-light: var(--gray-100);
@@ -81,6 +82,7 @@
   --sidebar-text-muted: rgba(248, 250, 252, 0.65);
   --sidebar-shadow: 20px 0 60px rgba(5, 9, 20, 0.45);
   --card-shadow: 0 20px 60px rgba(5, 9, 20, 0.65);
+  --sidebar-nav-fade: rgba(5, 9, 20, 0.9);
 }
 
 * {

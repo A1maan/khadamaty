@@ -6,7 +6,6 @@
   align-items: flex-start;
   gap: 32px;
   background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
-  overflow-x: hidden;
 }
 
 .customer-content {
