@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './Auth.css'
 
-// password mismatch error page - we get the email and mobile from the previous form
+// password mismatch error page
 const SignUpCustomerError = () => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -25,7 +25,7 @@ const SignUpCustomerError = () => {
     })
   }
 
-  // check if passwords actually mismatch now - need both to be filled and different
+  // check if passwords actually mismatch now
   const mismatch = formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword
 
   // send them back to the signup form with all their data preserved
