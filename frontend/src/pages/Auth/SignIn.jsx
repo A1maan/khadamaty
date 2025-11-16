@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './Auth.css'
 
+// this is just a global object to hold the user roles with their specific descriptions and configurations
 const configByRole = {
   customer: {
     title: 'Welcome Back',
