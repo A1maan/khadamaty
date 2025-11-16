@@ -24,9 +24,16 @@ const configByRole = {
 }
 
 const SignIn = ({ role = 'customer' }) => {
+  // set up navigation and form state
   const navigate = useNavigate()
-  const [formData, setFormData] = useState({ email: '', password: '' })
+  const [formData, setFormData] = useState({ email: '', password: '' }) 
+  
+  // we look up the config for the role passed in, but if it's invalid or doesn't exist,
+  // we just use the customer config as the default.
   const config = useMemo(() => configByRole[role] ?? configByRole.customer, [role])
+  
+  // build the header differently based on role, admins get a locked-down version with no sign up link,
+  // but customers and providers can sign up. providers also get directed to the provider signup page
   const headerProps =
     role === 'admin'
       ? { showSignUp: false }
@@ -36,6 +43,7 @@ const SignIn = ({ role = 'customer' }) => {
           signUpLink: role === 'provider' ? '/signup/provider' : '/signup',
         }
 
+  // update form data when inputs change
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -43,6 +51,7 @@ const SignIn = ({ role = 'customer' }) => {
     })
   }
 
+  // submit form and redirect to dashboard
   const handleSubmit = (e) => {
     e.preventDefault()
     navigate(config.redirect)
@@ -58,6 +67,7 @@ const SignIn = ({ role = 'customer' }) => {
             <h2>{config.title}</h2>
             <p className="auth-description">{config.description}</p>
 
+            {/* form with email and password inputs */}
             <form className="auth-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Email Address</label>
