@@ -1,21 +1,20 @@
-/* this sign up form is the customer version with password mismatch handling */
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './Auth.css'
 
+// customer signup form - collects email, phone, and password
 const SignUpCustomer = () => {
   const navigate = useNavigate()
-  const location = useLocation()
-  const statePrefill = location.state ?? {}
+  // track form inputs as the user types
   const [formData, setFormData] = useState({
-    email: statePrefill.email ?? '',
-    mobile: statePrefill.mobile ?? '',
-    password: statePrefill.password ?? '',
-    confirmPassword: statePrefill.confirmPassword ?? '',
+    email: '',
+    mobile: '',
+    password: ''
   })
 
   const handleChange = (e) => {
+    // capture whatever input changed and update the form state dynamically
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -24,20 +23,18 @@ const SignUpCustomer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // bounce to the error screen so users see the figma-style mismatch message
-    if (formData.password !== formData.confirmPassword) {
-      navigate('/signup/customer/error', { state: { email: formData.email, mobile: formData.mobile } })
-      return
-    }
+    // send them to verify their email after signup
     navigate('/signup/verify')
   }
 
   return (
     <div className="auth-page">
+      {/* show header with sign in link - no sign up button since they're already signing up */}
       <Header showSignUp={true} signUpText="Sign IN" signUpLink="/signin" />
       
       <main className="auth-main">
         <div className="auth-container">
+          {/* centered card with form */}
           <div className="auth-card">
             <h2>Welcome to Khadamaty</h2>
             <p className="auth-description">
@@ -45,6 +42,7 @@ const SignUpCustomer = () => {
             </p>
             
             <form className="auth-form" onSubmit={handleSubmit}>
+              {/* email input */}
               <div className="form-group">
                 <label>Email Address</label>
                 <input
@@ -57,9 +55,11 @@ const SignUpCustomer = () => {
                 />
               </div>
 
+              {/* phone number with country code */}
               <div className="form-group">
                 <label>Mobile Number</label>
                 <div className="phone-input">
+                  {/* hardcoded to +966 for now since we're only supporting saudi arabia */}
                   <span className="country-code">+966</span>
                   <input
                     type="tel"
@@ -72,6 +72,7 @@ const SignUpCustomer = () => {
                 </div>
               </div>
 
+              {/* password field */}
               <div className="form-group">
                 <label>Password</label>
                 <input
@@ -84,23 +85,13 @@ const SignUpCustomer = () => {
                 />
               </div>
 
-              <div className="form-group">
-                <label>Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="*****************"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
+              {/* submit button */}
               <button type="submit" className="btn-submit">
                 Sign UP
               </button>
             </form>
 
+            {/* link to sign in page if they already have an account */}
             <p className="auth-footer">
               Already have an Account? <Link to="/signin">Sign In</Link>
             </p>
