@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './Auth.css'
 
+// landing page where users choose which signup path to take
 const SignUpSelection = () => {
   const navigate = useNavigate()
 
@@ -11,11 +12,14 @@ const SignUpSelection = () => {
       <Header showSignUp={true} signUpText="Sign IN" signUpLink="/signin" />
       
       <main className="auth-main">
+        {/* main heading asking them to pick their role */}
         <h2 className="selection-title">
           Are You a Service Provider or Customer?
         </h2>
 
+        {/* two cards side by side for customer and provider */}
         <div className="selection-container">
+          {/* customer signup path */}
           <div className="selection-card">
             <h3>Customer</h3>
             <p>
@@ -30,6 +34,7 @@ const SignUpSelection = () => {
             </button>
           </div>
 
+          {/* provider signup path */}
           <div className="selection-card">
             <h3>Service Provider</h3>
             <p>
