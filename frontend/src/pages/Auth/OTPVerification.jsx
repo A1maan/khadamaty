@@ -9,12 +9,14 @@ const OTPVerification = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
 
   const handleOtpChange = (index, value) => {
+    // making sure that the input is only digits and updating the otp state
     if (value.length <= 1 && /^\d*$/.test(value)) {
       const newOtp = [...otp]
       newOtp[index] = value
       setOtp(newOtp)
 
-      // Auto-focus next input
+      // this part is just checking if all the input boxes are not filled then whenever a user fills one of the input boxes, 
+      // the focus should automatically move to the adjacent box on the right
       if (value && index < 5) {
         const nextInput = document.getElementById(`otp-${index + 1}`)
         nextInput?.focus()
@@ -22,6 +24,8 @@ const OTPVerification = () => {
     }
   }
 
+  // if user is verified, they should be navigated to the dashboard 
+  // (will be improved later when kamal implements the otp system on the backend)
   const handleVerify = () => {
     navigate('/customer/dashboard')
   }
@@ -44,6 +48,10 @@ const OTPVerification = () => {
               <strong>Example@domain.com</strong>
             </p>
 
+            {/*
+            this is the actual input for the otp verification
+            whenever a user types in a digit, it automatically switches to the next input box through the handleOtpChange function
+            */}
             <div className="otp-inputs">
               {otp.map((digit, index) => (
                 <input
@@ -58,6 +66,7 @@ const OTPVerification = () => {
               ))}
             </div>
 
+            {/*this part is not yet implemented since it requires the logic from the backend*/}
             <p className="resend-text">Resend in 30s</p>
 
             <button className="btn-verify" onClick={handleVerify}>
