@@ -1,0 +1,72 @@
+import { useMemo } from 'react'
+import { useParams, Link } from 'react-router-dom'
+
+// This will handle the categories chosen by the customer 
+const CustomerCategory = () => {
+  const { categoryId } = useParams()
+  const category = useMemo(() => ({
+    id: categoryId ?? 'all',
+    name: categoryId ?? 'Category',
+    blurb: 'Category details will appear once data is connected.',
+  }), [categoryId])
+  const providers = []
+
+  return (
+    <div className="customer-page">
+      <main className="customer-content">
+        <header className="customer-hero">
+          {/* The customer can browse the providers using the filters and categories */}
+          <div>
+            <p className="eyebrow">Browse</p>
+            <h1>{category.name}</h1>
+            <p>{category.blurb}</p>
+          </div>
+          <div className="category-actions">
+            <Link to={`/customer/browse?category=${category.id}`} className="btn-secondary-link">
+              Back to results
+            </Link>
+            <Link to="/customer/browse/filter" className="btn-secondary-link">
+              Adjust filters
+            </Link>
+          </div>
+        </header>
+       {/* Incase there is no providers in this category */}
+        <section className="provider-list">
+          {providers.length === 0 && (
+            <div className="empty-state">
+              <ion-icon name="sparkles-outline"></ion-icon>
+              <p>No providers listed for this category yet.</p>
+              <Link to="/customer/browse" className="btn-primary-outline">
+                Explore all services
+              </Link>
+            </div>
+          )}
+
+          {/* Display the providers with there info */}
+          {providers.map((provider) => (
+            <article key={provider.id} className="provider-row">
+              <div className="provider-avatar">
+                <ion-icon name="person-circle-outline"></ion-icon>
+              </div>
+              <div className="provider-summary">
+                <h3>{provider.name}</h3>
+                <p>{provider.description}</p>
+                <div className="provider-meta">
+                  <span>{provider.pricing}</span>
+                  <span>{provider.rating} ★ / {provider.reviews} reviews</span>
+                  <span>Demand: {provider.demand}</span>
+                </div>
+              </div>
+              {/* Connected to booking page */}
+              <Link to={`/customer/booking/${provider.id}`} className="btn-primary-outline">
+                Book
+              </Link>
+            </article>
+          ))}
+        </section>
+      </main>
+    </div>
+  )
+}
+
+export default CustomerCategory

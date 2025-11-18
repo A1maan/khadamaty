@@ -1,4 +1,4 @@
-/* main browse grid with search, chips, and filter bar */
+// main browse grid with search, chips, and filter bar
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import './CustomerBrowse.css'
@@ -8,12 +8,12 @@ const CustomerBrowse = () => {
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') ?? '')
 
   useEffect(() => {
-    /* keep the search box synced with the URL query */
+    // keep the search box synced with the URL query
     const incoming = searchParams.get('search') ?? ''
     setSearchTerm(incoming)
   }, [searchParams])
 
-  /* read filters from the query params */
+  // read filters from the query params
   const filters = useMemo(() => ({
     category: searchParams.get('category') ?? 'all',
     priceRange: searchParams.get('priceRange') ?? 'any',
@@ -34,14 +34,14 @@ const CustomerBrowse = () => {
   }
 
   const filteredProviders = useMemo(() => (
-    /* replace with real provider query once data is available */
+    // replace with real provider query once data is available
     []
   ), [])
 
   const hasActiveFilters = filters.category !== 'all' || filters.priceRange !== 'any' || filters.availability !== 'any' || Boolean(filters.rating)
 
   const readableFilters = [
-    /* each active filter will show up as a label */
+    // each active filter will show up as a label
     filters.category !== 'all' ? `Category: ${filters.category}` : null,
     filters.priceRange !== 'any' ? `Budget: ${priceCopy[filters.priceRange]}` : null,
     filters.availability !== 'any' ? `Availability: ${availabilityCopy[filters.availability]}` : null,
@@ -63,7 +63,8 @@ const CustomerBrowse = () => {
         </header>
 
         <div className="customer-toolbar">
-          {/* search input hooked to searchTerm state */}
+          { // search input hooked to searchTerm state
+          }
           <div className="customer-search">
             <ion-icon name="search-outline"></ion-icon>
             <input
@@ -79,17 +80,20 @@ const CustomerBrowse = () => {
         </div>
 
         <div className="category-chips">
-          {/* base chip for all serviece; more chips come from real categories */}
+          { // base chip for all serviece; more chips come from real categories
+          }
           <Link to="/customer/browse" className="chip chip-link">
             <ion-icon name="grid-outline"></ion-icon>
             All Services
           </Link>
-          {/* render category chips once categories are available */}
+          { // render category chips once categories are available
+          }
         </div>
 
         {hasActiveFilters && (
           <div className="active-filter-bar">
-            {/* shows current filters as pills so users can see what's applied */}
+            { // shows current filters as pills so users can see what's applied
+            }
             <div className="active-filter-list">
               {readableFilters.map((filterLabel) => (
                 <span key={filterLabel}>{filterLabel}</span>
@@ -108,7 +112,8 @@ const CustomerBrowse = () => {
         <section className="provider-list">
           {filteredProviders.length === 0 && (
             <div className="empty-state">
-              {/* empty state while there is no data or no matches */}
+              { // empty state while there is no data or no matches
+              }
               <ion-icon name="sparkles-outline"></ion-icon>
               <p>No providers match your current filters. Try widening your search.</p>
               <Link
@@ -122,7 +127,7 @@ const CustomerBrowse = () => {
           )}
 
           {filteredProviders.map((provider) => (
-            /* This will shows the filtered providers only, and a link to book a serviece */
+            // This will shows the filtered providers only, and a link to book a serviece
             <article key={provider.id} className="provider-row">
               <div className="provider-avatar">
                 <ion-icon name="person-circle-outline"></ion-icon>
