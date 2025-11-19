@@ -5,6 +5,9 @@ import CustomerBrowse from './pages/Customer/CustomerBrowse'
 import CustomerBrowseFilter from './pages/Customer/CustomerBrowseFilter'
 import CustomerCategory from './pages/Customer/CustomerCategory'
 import CustomerBooking from './pages/Customer/CustomerBooking'
+import CustomerActive from './pages/Customer/CustomerActive'
+import CustomerPast from './pages/Customer/CustomerPast'
+import CustomerSaved from './pages/Customer/CustomerSaved'
 
 function App() {
   // Added routes for my pages to see what I am doing and if there is any errors
@@ -17,6 +20,9 @@ function App() {
         <Route path="/customer/browse/filter" element={<CustomerBrowseFilter />} />
         <Route path="/customer/browse/:categoryId" element={<CustomerCategory />} />
         <Route path="/customer/booking/:providerId" element={<CustomerBooking />} />
+        <Route path="/customer/active" element={<CustomerActive />} />
+        <Route path="/customer/history" element={<CustomerPast />} />
+        <Route path="/customer/saved" element={<CustomerSaved />} />
 
     </Routes>
   </Router>
