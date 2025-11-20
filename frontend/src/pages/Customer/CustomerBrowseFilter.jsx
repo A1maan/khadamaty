@@ -1,5 +1,8 @@
+/* dedicated filters sheet feeding the browse screen via query params */
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { serviceCategories } from '../../data/customerData'
+import './CustomerPages.css'
 const CustomerBrowseFilter = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -53,8 +56,9 @@ const CustomerBrowseFilter = () => {
               Category
               <select value={category} onChange={(event) => setCategory(event.target.value)}>
                 <option value="all">Any category</option>
-                { // options to be populated when categories data is available
-                }
+                {serviceCategories.map((category) => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
               </select>
             </label>
             

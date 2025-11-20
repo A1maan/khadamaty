@@ -1,15 +1,21 @@
+/* this page shows providers inside a single service category */
 import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { serviceCategories } from '../../data/customerData'
+import { useMockData } from '../../context/MockDataContext'
+import './CustomerPages.css'
 
 // This will handle the categories chosen by the customer 
 const CustomerCategory = () => {
   const { categoryId } = useParams()
-  const category = useMemo(() => ({
-    id: categoryId ?? 'all',
-    name: categoryId ?? 'Category',
-    blurb: 'Category details will appear once data is connected.',
-  }), [categoryId])
-  const providers = []
+  const { publicServices } = useMockData()
+  const category = useMemo(
+    () => serviceCategories.find((cat) => cat.id === categoryId) ?? serviceCategories[0],
+    [categoryId]
+  )
+  const providers = publicServices.filter(
+    (provider) => provider.category === category.id && provider.status !== 'Draft'
+  )
 
   return (
     <div className="customer-page">

@@ -1,7 +1,11 @@
+// lets customers simulate status changes for active bookings
+import { useMockData } from '../../context/MockDataContext'
+import './CustomerPages.css'
 
 const CustomerActive = () => {
   // Active requests will be saved here 
-  const activeRequests = []
+  const { customerRequests, providerMap, updateActiveRequestStatus, cancelCustomerRequest } = useMockData()
+  const { activeRequests } = customerRequests
 
   return (
     <div className="customer-page">
@@ -24,32 +28,43 @@ const CustomerActive = () => {
           )}
           {// Displaying all the active request when available 
           }
-          {activeRequests.map((req) => (
+          {activeRequests.map((req) => {
+            const provider = providerMap[req.providerId]
+            return (
             <article key={req.id} className="provider-row">
               <div className="provider-avatar">
                 <ion-icon name="person-circle-outline"></ion-icon>
               </div>
               <div className="provider-summary">
-                <h3>{req.providerName}</h3>
-                <p>{req.providerDescription}</p>
+                <h3>{provider?.name}</h3>
+                <p>{provider?.description}</p>
                 <div className="provider-meta">
                   <span>Status: {req.status}</span>
                   <span>Window: {req.window}</span>
-                  <span>Pricing: {req.pricing}</span>
+                  <span>Pricing: {provider?.pricing}</span>
                 </div>
               </div>
               {// This will update the request status 
               }
               <div className="booking-actions">
-                <button type="button" className="btn-primary-solid">
+                <button
+                  type="button"
+                  className="btn-primary-solid"
+                  onClick={() => updateActiveRequestStatus(req.id)}
+                >
                   Advance Status
                 </button>
-                <button type="button" className="btn-ghost">
+                <button
+                  type="button"
+                  className="btn-ghost"
+                  onClick={() => cancelCustomerRequest(req.id)}
+                >
                   Cancel
                 </button>
               </div>
             </article>
-          ))}
+            )
+          })}
         </section>
       </main>
     </div>

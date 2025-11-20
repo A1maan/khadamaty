@@ -1,9 +1,11 @@
-// history tab for customers with rebook + review for past providers
+/* history tab for customers with rebook + review inline widgets */
 import { useState } from 'react'
-
+import { useMockData } from '../../context/MockDataContext'
+import './CustomerPages.css'
 
 const CustomerPast = () => {
-  const pastRequests = []
+  const { customerRequests, providerMap, rebookPastRequest, submitCustomerReview } = useMockData()
+  const { pastRequests } = customerRequests
   const [reviewTarget, setReviewTarget] = useState(null)
   const [reviewForm, setReviewForm] = useState({ rating: 5, feedback: '' })
 
@@ -15,7 +17,7 @@ const CustomerPast = () => {
   const handleReviewSubmit = (event) => {
     event.preventDefault()
     if (!reviewTarget) return
-    // placeholder until submit logic exists
+    submitCustomerReview(reviewTarget, reviewForm)
     setReviewTarget(null)
     setReviewForm({ rating: 5, feedback: '' })
   }
@@ -43,6 +45,7 @@ const CustomerPast = () => {
           {// Display past bookings 
           }
           {pastRequests.map((req) => {
+            const provider = providerMap[req.providerId]
             const isReviewing = reviewTarget === req.id
             return (
               <article key={req.id} className="provider-row">
@@ -50,8 +53,8 @@ const CustomerPast = () => {
                   <ion-icon name="person-circle-outline"></ion-icon>
                 </div>
                 <div className="provider-summary">
-                  <h3>{req.providerName}</h3>
-                  <p>{req.providerDescription}</p>
+                  <h3>{provider?.name}</h3>
+                  <p>{provider?.description}</p>
                   <div className="provider-meta">
                     <span>Completed: {req.completedOn}</span>
                     <span>Status: {req.status}</span>
@@ -59,7 +62,7 @@ const CustomerPast = () => {
                   </div>
                 </div>
                 <div className="booking-actions">
-                  <button type="button" className="btn-primary-solid">
+                  <button type="button" className="btn-primary-solid" onClick={() => rebookPastRequest(req.id)}>
                     Rebook
                   </button>
                   <button type="button" className="btn-ghost" onClick={() => startReview(req)}>

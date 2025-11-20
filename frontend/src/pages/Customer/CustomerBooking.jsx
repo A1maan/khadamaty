@@ -1,23 +1,15 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { useMockData } from '../../context/MockDataContext'
+import './CustomerPages.css'
 const CustomerBooking = () => {
   const { providerId } = useParams()
-
+  const { addCustomerRequest, saveProviderForLater, providerMap, publicServices } = useMockData()
 
   // This is the structure for the provider 
-  const provider = useMemo(  
-    () => ({
-      id: providerId ?? 'unknown',
-      name: providerId ?? 'Provider',
-      description: 'Provider details will be shown here once data is connected.',
-      category: 'Category',
-      pricing: 'Pricing details to be added',
-      demand: 'Demand details to be added',
-      rating: 'Rating TBD',
-      reviews: '0',
-      availability: 'Availability TBD',
-    }),
-    [providerId]
+  const provider = useMemo(
+    () => providerMap[providerId] ?? publicServices[0],
+    [providerId, providerMap, publicServices]
   )
   const [formValues, setFormValues] = useState({ date: '', time: '', notes: '' })
   const [feedback, setFeedback] = useState('')
@@ -33,12 +25,19 @@ const CustomerBooking = () => {
       setFeedback('Please select a date and time to continue.')
       return
     }
-    setFeedback('Request submitted! (placeholder until real booking logic is wired)')
+    addCustomerRequest({
+      providerId: provider.id,
+      date: formValues.date,
+      time: formValues.time,
+      notes: formValues.notes,
+    })
+    setFeedback('Request submitted! You can track it from Active Requests.')
     setFormValues({ date: '', time: '', notes: '' })
   }
   // This function will handle save the booking for later 
   const handleSaveForLater = () => {
-    setFeedback('Provider saved for later. (placeholder until save logic is wired)')
+    saveProviderForLater(provider.id, formValues.notes)
+    setFeedback('Provider saved. You can book whenever you are ready.')
   }
 
   if (!provider) {

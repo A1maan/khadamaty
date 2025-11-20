@@ -1,6 +1,7 @@
 // customer home hub with search, featured pros, and quick category links
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { featuredProviders, serviceCategories } from '../../data/customerData'
 import './CustomerDashboard.css'
 
 const CustomerDashboard = () => {
@@ -18,7 +19,6 @@ const CustomerDashboard = () => {
 
   return (
     <div className="customer-dashboard">
-      
       <main className="dashboard-content">
         <form className="dashboard-banner" onSubmit={handleSearch}>
           { // This form is for seaching, it will call the handleSearch function
@@ -54,6 +54,16 @@ const CustomerDashboard = () => {
           <div className="providers-grid">
             { // content will appear once provider data is available
             }
+            {featuredProviders.map((provider) => (
+              <div key={provider.id} className="provider-card">
+                <ion-icon name="person-circle-outline"></ion-icon>
+                <div className="provider-info">
+                  <h4>{provider.name}</h4>
+                  <p>{provider.service}</p>
+                  <span>{provider.rating} ★ • {provider.jobs} jobs</span>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -70,6 +80,13 @@ const CustomerDashboard = () => {
           <div className="services-grid">
             { // content will appear once service categories are available
             }
+            {serviceCategories.map((category) => (
+              <Link key={category.id} to={`/customer/browse/${category.id}`} className="service-card">
+                <ion-icon name={category.icon}></ion-icon>
+                <h3>{category.name}</h3>
+                <p>{category.blurb}</p>
+              </Link>
+            ))}
           </div>
         </section>
       </main>

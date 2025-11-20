@@ -1,11 +1,14 @@
 // main browse grid with search, chips, and filter bar
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import './CustomerBrowse.css'
+import { serviceCategories } from '../../data/customerData'
+import { useMockData } from '../../context/MockDataContext'
+import './CustomerPages.css'
 
 const CustomerBrowse = () => {
   const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') ?? '')
+  const { publicServices } = useMockData()
 
   useEffect(() => {
     // keep the search box synced with the URL query
@@ -34,15 +37,30 @@ const CustomerBrowse = () => {
   }
 
   const filteredProviders = useMemo(() => (
-    // replace with real provider query once data is available
-    []
-  ), [])
+    // run all filter rules plus the text search in one pass for now
+    publicServices
+      .filter((provider) => provider.status !== 'Draft')
+      .filter((provider) => {
+        if (filters.category !== 'all' && provider.category !== filters.category) return false
+        if (filters.priceRange !== 'any' && provider.priceRange !== filters.priceRange) return false
+        if (filters.availability !== 'any' && provider.availabilityTag !== filters.availability) return false
+        if (filters.rating && provider.rating < filters.rating) return false
+        if (searchTerm.trim()) {
+          const normalized = searchTerm.trim().toLowerCase()
+          const haystack = `${provider.name} ${provider.description}`.toLowerCase()
+          if (!haystack.includes(normalized)) return false
+        }
+        return true
+      })
+  ), [publicServices, filters, searchTerm])
 
   const hasActiveFilters = filters.category !== 'all' || filters.priceRange !== 'any' || filters.availability !== 'any' || Boolean(filters.rating)
 
   const readableFilters = [
     // each active filter will show up as a label
-    filters.category !== 'all' ? `Category: ${filters.category}` : null,
+    filters.category !== 'all'
+      ? `Category: ${serviceCategories.find((cat) => cat.id === filters.category)?.name ?? 'Custom'}`
+      : null,
     filters.priceRange !== 'any' ? `Budget: ${priceCopy[filters.priceRange]}` : null,
     filters.availability !== 'any' ? `Availability: ${availabilityCopy[filters.availability]}` : null,
     filters.rating ? `Rating: ${filters.rating}+` : null,
@@ -88,6 +106,12 @@ const CustomerBrowse = () => {
           </Link>
           { // render category chips once categories are available
           }
+          {serviceCategories.map((category) => (
+            <Link key={category.id} to={`/customer/browse/${category.id}`} className="chip chip-link">
+              <ion-icon name={category.icon}></ion-icon>
+              {category.name}
+            </Link>
+          ))}
         </div>
 
         {hasActiveFilters && (

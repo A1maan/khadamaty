@@ -1,5 +1,14 @@
+/* saved list so customers can rebook or remove providers */
+import { useMockData } from '../../context/MockDataContext'
+import './CustomerPages.css'
+
 const CustomerSaved = () => {
-  const detailedProviders = []
+  const { customerRequests, providerMap, bookSavedProvider, removeSavedProvider } = useMockData()
+  const { savedProviders } = customerRequests
+
+  const detailedProviders = savedProviders
+    .map((entry) => ({ ...entry, provider: providerMap[entry.providerId] }))
+    .filter((entry) => Boolean(entry.provider))
 
   return (
     // Display the saved providers 
@@ -37,10 +46,18 @@ const CustomerSaved = () => {
                 </div>
               </div>
               <div className="booking-actions">
-                <button type="button" className="btn-primary-solid">
+                <button
+                  type="button"
+                  className="btn-primary-solid"
+                  onClick={() => bookSavedProvider(entry.providerId)}
+                >
                   Book Again
                 </button>
-                <button type="button" className="btn-ghost">
+                <button
+                  type="button"
+                  className="btn-ghost"
+                  onClick={() => removeSavedProvider(entry.providerId)}
+                >
                   Remove
                 </button>
               </div>
