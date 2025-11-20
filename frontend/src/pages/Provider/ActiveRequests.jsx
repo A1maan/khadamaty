@@ -1,29 +1,23 @@
-/* Provider view of active jobs with messaging + completion controls */
-
+/* provider view of running jobs with message + complete controls */
 import { useMemo, useState } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import { useMockData } from '../../context/MockDataContext'
 import './Provider.css'
 
 const ActiveRequests = () => {
-  // Pull relevant data + actions from context
   const { providerData, markProviderRequestCompleted, pushToast } = useMockData()
-
-  // Local state for searching and messaging
   const [searchTerm, setSearchTerm] = useState('')
   const [messageTarget, setMessageTarget] = useState(null)
   const [messageBody, setMessageBody] = useState('')
 
-  // Search logic (memoized to avoid re-filtering every render)
   const filteredRequests = useMemo(() => {
     if (!searchTerm.trim()) return providerData.activeRequests
-    const normalized = searchTerm.toLowerCase()
+    const normalized = searchTerm.trim().toLowerCase()
     return providerData.activeRequests.filter((request) =>
       `${request.customer} ${request.service}`.toLowerCase().includes(normalized)
     )
   }, [providerData.activeRequests, searchTerm])
 
-  // Fake “send message” action
   const handleSendMessage = (event) => {
     event.preventDefault()
     if (!messageTarget || !messageBody.trim()) return
@@ -42,8 +36,6 @@ const ActiveRequests = () => {
             <p className="eyebrow">Requests</p>
             <h2>Active Requests</h2>
           </div>
-
-          {/* Search bar for filtering */}
           <div className="search-bar">
             <ion-icon name="search-outline"></ion-icon>
             <input
@@ -63,7 +55,6 @@ const ActiveRequests = () => {
           {filteredRequests.map((request) => {
             const chipClass = request.status.replace(' ', '').toLowerCase()
             const isMessaging = messageTarget === request.id
-
             return (
               <article key={request.id} className="request-card">
                 <div className="request-header">
@@ -71,31 +62,32 @@ const ActiveRequests = () => {
                     <h3>{request.customer}</h3>
                     <p>{request.service}</p>
                   </div>
-                  <span className={`status-pill ${chipClass}`}>{request.status}</span>
+                  <span className={`status-pill ${chipClass}`}>
+                    {request.status}
+                  </span>
                 </div>
-
                 <div className="request-meta">
                   <span>Date: {request.date}</span>
                   <span>Time: {request.timeslot}</span>
                 </div>
-
                 <div className="request-actions">
                   <button
+                    type="button"
                     className="btn-primary-solid"
                     onClick={() => markProviderRequestCompleted(request.id)}
                   >
                     Mark Completed
                   </button>
                   <button
+                    type="button"
                     className="btn-ghost"
                     onClick={() => setMessageTarget(isMessaging ? null : request.id)}
                   >
                     {isMessaging ? 'Close' : 'Message'}
                   </button>
                 </div>
-
-                {/* Slide-down message box when opened */}
                 {isMessaging && (
+                  /* quick textarea so providers can log a faux message */
                   <form className="message-box" onSubmit={handleSendMessage}>
                     <textarea
                       rows="3"
