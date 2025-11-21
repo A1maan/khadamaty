@@ -1,6 +1,7 @@
 // customer home hub with search, featured pros, and quick category links
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Sidebar from '../../components/Sidebar/Sidebar'
 import { featuredProviders, serviceCategories } from '../../data/customerData'
 import './CustomerDashboard.css'
 
@@ -19,6 +20,8 @@ const CustomerDashboard = () => {
 
   return (
     <div className="customer-dashboard">
+      <Sidebar userType="customer" />
+      
       <main className="dashboard-content">
         <form className="dashboard-banner" onSubmit={handleSearch}>
           { // This form is for seaching, it will call the handleSearch function

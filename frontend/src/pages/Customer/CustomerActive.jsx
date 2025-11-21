@@ -1,4 +1,5 @@
 // lets customers simulate status changes for active bookings
+import Sidebar from '../../components/Sidebar/Sidebar'
 import { useMockData } from '../../context/MockDataContext'
 import './CustomerPages.css'
 
@@ -9,6 +10,7 @@ const CustomerActive = () => {
 
   return (
     <div className="customer-page">
+      <Sidebar userType="customer" />
       <main className="customer-content">
         <header className="customer-hero">
           <div>

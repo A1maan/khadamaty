@@ -1,6 +1,7 @@
 /* this page shows providers inside a single service category */
 import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import Sidebar from '../../components/Sidebar/Sidebar'
 import { serviceCategories } from '../../data/customerData'
 import { useMockData } from '../../context/MockDataContext'
 import './CustomerPages.css'
@@ -19,6 +20,7 @@ const CustomerCategory = () => {
 
   return (
     <div className="customer-page">
+      <Sidebar userType="customer" />
       <main className="customer-content">
         <header className="customer-hero">
           {/* The customer can browse the providers using the filters and categories */}

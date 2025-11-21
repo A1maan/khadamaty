@@ -1,6 +1,7 @@
 // main browse grid with search, chips, and filter bar
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import Sidebar from '../../components/Sidebar/Sidebar'
 import { serviceCategories } from '../../data/customerData'
 import { useMockData } from '../../context/MockDataContext'
 import './CustomerPages.css'
@@ -68,6 +69,7 @@ const CustomerBrowse = () => {
 
   return (
     <div className="customer-page">
+      <Sidebar userType="customer" />
       <main className="customer-content">
         <header className="customer-hero">
           <div>

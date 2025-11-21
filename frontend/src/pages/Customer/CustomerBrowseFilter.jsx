@@ -1,6 +1,7 @@
 /* dedicated filters sheet feeding the browse screen via query params */
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import Sidebar from '../../components/Sidebar/Sidebar'
 import { serviceCategories } from '../../data/customerData'
 import './CustomerPages.css'
 const CustomerBrowseFilter = () => {
@@ -37,6 +38,7 @@ const CustomerBrowseFilter = () => {
 
   return (
     <div className="customer-page">
+      <Sidebar userType="customer" />
       <main className="customer-content">
         <header className="customer-hero">
           <div>

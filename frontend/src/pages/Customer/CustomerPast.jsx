@@ -1,5 +1,6 @@
 /* history tab for customers with rebook + review inline widgets */
 import { useState } from 'react'
+import Sidebar from '../../components/Sidebar/Sidebar'
 import { useMockData } from '../../context/MockDataContext'
 import './CustomerPages.css'
 
@@ -23,8 +24,8 @@ const CustomerPast = () => {
   }
 
   return (
-    // A page to show past services 
     <div className="customer-page">
+      <Sidebar userType="customer" />
       <main className="customer-content">
         <header className="customer-hero">
           <div>

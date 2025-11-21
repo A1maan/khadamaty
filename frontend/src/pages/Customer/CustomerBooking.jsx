@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import Sidebar from '../../components/Sidebar/Sidebar'
 import { useMockData } from '../../context/MockDataContext'
 import './CustomerPages.css'
 const CustomerBooking = () => {
@@ -43,6 +44,7 @@ const CustomerBooking = () => {
   if (!provider) {
     return (
       <div className="customer-page">
+        <Sidebar userType="customer" />
         <main className="customer-content">
           <header className="customer-hero">
             <div>
@@ -61,6 +63,7 @@ const CustomerBooking = () => {
 
   return (
     <div className="customer-page">
+      <Sidebar userType="customer" />
       <main className="customer-content">
         <header className="customer-hero">
           <div>

@@ -1,4 +1,5 @@
 /* saved list so customers can rebook or remove providers */
+import Sidebar from '../../components/Sidebar/Sidebar'
 import { useMockData } from '../../context/MockDataContext'
 import './CustomerPages.css'
 
@@ -11,8 +12,8 @@ const CustomerSaved = () => {
     .filter((entry) => Boolean(entry.provider))
 
   return (
-    // Display the saved providers 
     <div className="customer-page">
+      <Sidebar userType="customer" />
       <main className="customer-content">
         <header className="customer-hero">
           <div>
