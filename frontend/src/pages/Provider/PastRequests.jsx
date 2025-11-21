@@ -1,36 +1,20 @@
-/* Provider view of active jobs with messaging + completion controls */
-
+/* historical log for providers, mainly for auditing declines/completions */
 import { useMemo, useState } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import { useMockData } from '../../context/MockDataContext'
 import './Provider.css'
 
-const ActiveRequests = () => {
-  // Pull relevant data + actions from context
-  const { providerData, markProviderRequestCompleted, pushToast } = useMockData()
-
-  // Local state for searching and messaging
+const PastRequests = () => {
+  const { providerData } = useMockData()
   const [searchTerm, setSearchTerm] = useState('')
-  const [messageTarget, setMessageTarget] = useState(null)
-  const [messageBody, setMessageBody] = useState('')
 
-  // Search logic (memoized to avoid re-filtering every render)
   const filteredRequests = useMemo(() => {
-    if (!searchTerm.trim()) return providerData.activeRequests
-    const normalized = searchTerm.toLowerCase()
-    return providerData.activeRequests.filter((request) =>
+    if (!searchTerm.trim()) return providerData.pastRequests
+    const normalized = searchTerm.trim().toLowerCase()
+    return providerData.pastRequests.filter((request) =>
       `${request.customer} ${request.service}`.toLowerCase().includes(normalized)
     )
-  }, [providerData.activeRequests, searchTerm])
-
-  // Fake “send message” action
-  const handleSendMessage = (event) => {
-    event.preventDefault()
-    if (!messageTarget || !messageBody.trim()) return
-    pushToast('Message sent to customer')
-    setMessageTarget(null)
-    setMessageBody('')
-  }
+  }, [providerData.pastRequests, searchTerm])
 
   return (
     <div className="provider-page">
@@ -39,16 +23,14 @@ const ActiveRequests = () => {
       <main className="provider-content">
         <div className="provider-header">
           <div>
-            <p className="eyebrow">Requests</p>
-            <h2>Active Requests</h2>
+            <p className="eyebrow">History</p>
+            <h2>Past Requests</h2>
           </div>
-
-          {/* Search bar for filtering */}
           <div className="search-bar">
             <ion-icon name="search-outline"></ion-icon>
             <input
               type="text"
-              placeholder="Search active requests"
+              placeholder="Search past requests"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
             />
@@ -57,62 +39,30 @@ const ActiveRequests = () => {
 
         <section className="provider-cards">
           {filteredRequests.length === 0 && (
-            <div className="content-placeholder">No active requests found.</div>
+            <div className="content-placeholder">No past requests found.</div>
           )}
 
-          {filteredRequests.map((request) => {
-            const chipClass = request.status.replace(' ', '').toLowerCase()
-            const isMessaging = messageTarget === request.id
-
-            return (
-              <article key={request.id} className="request-card">
-                <div className="request-header">
-                  <div>
-                    <h3>{request.customer}</h3>
-                    <p>{request.service}</p>
-                  </div>
-                  <span className={`status-pill ${chipClass}`}>{request.status}</span>
+          {filteredRequests.map((request) => (
+            <article key={request.id} className="request-card">
+              <div className="request-header">
+                <div>
+                  <h3>{request.customer}</h3>
+                  <p>{request.service}</p>
                 </div>
-
-                <div className="request-meta">
-                  <span>Date: {request.date}</span>
-                  <span>Time: {request.timeslot}</span>
-                </div>
-
-                <div className="request-actions">
-                  <button
-                    className="btn-primary-solid"
-                    onClick={() => markProviderRequestCompleted(request.id)}
-                  >
-                    Mark Completed
-                  </button>
-                  <button
-                    className="btn-ghost"
-                    onClick={() => setMessageTarget(isMessaging ? null : request.id)}
-                  >
-                    {isMessaging ? 'Close' : 'Message'}
-                  </button>
-                </div>
-
-                {/* Slide-down message box when opened */}
-                {isMessaging && (
-                  <form className="message-box" onSubmit={handleSendMessage}>
-                    <textarea
-                      rows="3"
-                      value={messageBody}
-                      onChange={(event) => setMessageBody(event.target.value)}
-                      placeholder="Share an update with the customer"
-                    ></textarea>
-                    <button type="submit" className="btn-primary-outline compact">Send</button>
-                  </form>
-                )}
-              </article>
-            )
-          })}
+                <span className={`status-pill ${request.status.toLowerCase()}`}>
+                  {request.status}
+                </span>
+              </div>
+              <div className="request-meta">
+                <span>Date: {request.date}</span>
+                {request.declineReason && <span>Reason: {request.declineReason}</span>}
+              </div>
+            </article>
+          ))}
         </section>
       </main>
     </div>
   )
 }
 
-export default ActiveRequests
+export default PastRequests

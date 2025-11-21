@@ -1,17 +1,130 @@
 :root {
-  --color-bg: #f5f6fb;
-  --color-surface: #ffffff;
-  --color-border: rgba(15, 23, 42, 0.12);
-  --color-muted: #6b7280;
-  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
-  --radius-md: 0.75rem;
-  --radius-lg: 1.25rem;
-  --radius-pill: 999px;
-  --sidebar-width: 260px;
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 0.85rem;
-  --space-lg: 1.25rem;
-  --space-xl: 2rem;
+  /* Brand palette */
+  --white: #ffffff;
+  --black: #0b1426;
+  --brand-navy: #0f1b40;
+  --brand-indigo: #2a4dd0;
+  --brand-indigo-dark: #1f3bb3;
+  --brand-teal: #14b8a6;
+  --brand-sun: #f4a259;
+  --brand-rose: #f472b6;
+  --gray-50: #f7f8fc;
+  --gray-100: #eef2ff;
+  --gray-200: #e4e8f3;
+  --gray-300: #cfd8ea;
+  --gray-500: #6b7280;
+  --gray-700: #4b5563;
+  --surface-card: #ffffff;
+  --surface-muted: #f7f8fc;
+  --surface-overlay: rgba(255, 255, 255, 0.92);
+  --surface-border: rgba(15, 27, 64, 0.05);
+  --badge-background: rgba(15, 27, 64, 0.06);
+  --input-surface: #f8fafc;
+  --sidebar-bg: linear-gradient(180deg, rgba(247, 248, 252, 0.98) 0%, rgba(229, 237, 255, 0.95) 55%, rgba(42, 77, 208, 0.85) 100%);
+  --sidebar-surface: rgba(15, 27, 64, 0.06);
+  --sidebar-surface-strong: rgba(42, 77, 208, 0.18);
+  --sidebar-border: rgba(15, 27, 64, 0.08);
+  --sidebar-text: #0f172a;
+  --sidebar-text-muted: rgba(15, 23, 42, 0.7);
+  --sidebar-shadow: 20px 0 60px rgba(15, 27, 64, 0.12);
+  --sidebar-nav-fade: rgba(255, 255, 255, 0.9);
+
+  /* Legacy tokens mapped to new palette */
+  --gray-light: var(--gray-100);
+  --gray-medium: var(--gray-200);
+  --gray-dark: var(--gray-500);
+  --gray-border: var(--gray-300);
+  --gray-text: var(--gray-700);
+  --gray-bg: var(--gray-50);
+  --gray-card: var(--surface-card);
+  --primary: var(--brand-indigo);
+  --primary-dark: var(--brand-indigo-dark);
+  --accent: var(--brand-teal);
+  --error: #ef4444;
+  --success: #22c55e;
+
+  /* Shadows & radii */
+  --card-shadow: 0 20px 60px rgba(15, 27, 64, 0.08);
+  --card-radius: 24px;
+
+  /* Typography */
+  --font-primary: 'Inknut Antiqua', serif;
+  --font-secondary: 'Inder', sans-serif;
+  --font-tertiary: 'Inclusive Sans', sans-serif;
 }
 
+[data-theme='dark'] {
+  --white: #0b1221;
+  --black: #f8fafc;
+  --brand-navy: #e0e7ff;
+  --brand-indigo: #93a5ff;
+  --brand-indigo-dark: #7c8ffc;
+  --brand-teal: #2dd4bf;
+  --brand-sun: #f7b267;
+  --brand-rose: #fb7185;
+  --gray-50: #050914;
+  --gray-100: #0f172a;
+  --gray-200: #1e293b;
+  --gray-300: #334155;
+  --gray-500: #94a3b8;
+  --gray-700: #cbd5f5;
+  --surface-card: #101828;
+  --surface-muted: #0b1221;
+  --surface-overlay: rgba(9, 13, 25, 0.92);
+  --surface-border: rgba(255, 255, 255, 0.12);
+  --badge-background: rgba(255, 255, 255, 0.12);
+  --input-surface: #0f172a;
+  --sidebar-bg: linear-gradient(180deg, rgba(5, 9, 20, 0.95) 0%, rgba(15, 27, 64, 0.92) 55%, rgba(42, 77, 208, 0.75) 100%);
+  --sidebar-surface: rgba(255, 255, 255, 0.08);
+  --sidebar-surface-strong: rgba(255, 255, 255, 0.16);
+  --sidebar-border: rgba(255, 255, 255, 0.18);
+  --sidebar-text: #f8fafc;
+  --sidebar-text-muted: rgba(248, 250, 252, 0.65);
+  --sidebar-shadow: 20px 0 60px rgba(5, 9, 20, 0.45);
+  --card-shadow: 0 20px 60px rgba(5, 9, 20, 0.65);
+  --sidebar-nav-fade: rgba(5, 9, 20, 0.9);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(180deg, var(--gray-50) 0%, var(--gray-100) 100%);
+  color: var(--black);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+}
+
+button {
+  font-family: var(--font-secondary);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input, textarea, select {
+  font-family: var(--font-secondary);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: transparent;
+}
