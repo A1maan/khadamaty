@@ -1,0 +1,17 @@
+:root {
+  --color-bg: #f5f6fb;
+  --color-surface: #ffffff;
+  --color-border: rgba(15, 23, 42, 0.12);
+  --color-muted: #6b7280;
+  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-pill: 999px;
+  --sidebar-width: 260px;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.85rem;
+  --space-lg: 1.25rem;
+  --space-xl: 2rem;
+}
+
