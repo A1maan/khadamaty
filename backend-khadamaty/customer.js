@@ -5,6 +5,7 @@ import { Service } from "./schemas.js";
 import dotenv from "dotenv";
 import { Request } from "./schemas.js";
 import { request } from "express";
+import { SavedService } from "./schemas.js";
 
 dotenv.config();
 export const transporter = nodemailer.createTransport({
@@ -41,6 +42,20 @@ export async function handleSignup(req, res) {
         res.status(500).json({ message: "Error creating customer" });
     }
 }
+
+export async function handleSigniIn(req, res) {
+    const { email, password } = req.body;
+    const customer = await Customer.findOne({ email: email });
+    if (!customer) {
+        return res.status(400).json({ message: "Invalid email" });
+    }
+    const isPasswordValid = await bcrypt.compare(password, customer.password);
+    if (!isPasswordValid) {
+        return res.status(400).json({ message: "Invalid password" });
+    }
+    res.status(200).json({ message: "Customer signed in successfully" });
+}
+
 
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000);
@@ -98,7 +113,8 @@ export async function getServices(req, res) {
 
 export async function requestService(req, res) {
     try {
-        const { serviceId, datetime, notes, customerId } = req.body;
+        customerId = req.query.id;
+        const { serviceId, datetime, notes } = req.body;
         const newRequest = new Request({ serviceId, datetime, notes, customerId })
         await newRequest.save();
         res.status(201).json({
@@ -112,4 +128,65 @@ export async function requestService(req, res) {
         res.status(500).json({ message: "Error fetching services: check console" });
     }
 }
+
+export async function getActiveRequests(req, res) {
+    try {
+        const { customerId } = req.query;
+        const requests = await Request.find({ customerId: customerId, status: "active" });
+        if (!requests) {
+            return res.status(404).json({ message: "No active requests found" });
+        } else {
+            res.status(200).json({ message: "Requests fetched successfully", requests: requests });
+        }
+    } catch (error) {
+        console.error("Error fetching requests:", error);
+        res.status(500).json({ message: "Error fetching requests" });
+    }
+}
+export async function getPastRequests(req, res) {
+    try {
+        const { customerId } = req.query;
+        const requests = await Request.find({ customerId: customerId, status: { $in: ["completed", "cancelled"] } });
+        if (!requests) {
+            return res.status(404).json({ message: "No past requests found" });
+        } else {
+            res.status(200).json({ message: "Requests fetched successfully", requests: requests });
+        }
+    } catch (error) {
+        console.error("Error fetching requests:", error);
+        res.status(500).json({ message: "Error fetching requests" });
+    }
+}
+
+
+export async function saveService(req, res) {
+    try {
+        const { customerId, serviceId } = req.body;
+        const savedService = new SavedService({ customerId, serviceId });
+        await savedService.save();
+        res.status(201).json({ message: "Service saved successfully" });
+    } catch (error) {
+        console.error("Error saving service:", error);
+        res.status(500).json({ message: "Error saving service" });
+    }
+}
+
+export async function getSavedServices(req, res) {
+    try {
+        const customerId = req.query.id;
+        const services = await SavedService.find({ customerId: id })
+        if (!services) {
+            request.status(201).json({ success: true, message: "No  saved services found!", data: null });
+            return;
+        }
+        request.json(201).json({ success: true, message: "Saved services fetched successfully", data: services });
+    } catch (error) {
+        console.error("Error Fetching saved Services");
+        res.status(400).json({ message: "Error fetching saved services" });
+        return;
+    }
+}
+
+
+
 

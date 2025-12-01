@@ -6,6 +6,8 @@ import { handleSignup } from './customer.js';
 import { verifyOtp } from './customer.js';
 import { getServices } from './customer.js';
 import { requestService } from './customer.js';
+import { getActiveRequests } from './customer.js';
+import { getPastRequests } from './customer.js';
 
 dotenv.config();
 
@@ -37,6 +39,8 @@ app.post("/customer/signup", handleSignup);
 app.post("/customer/verify-otp", verifyOtp);
 app.get("/customer/services", getServices);
 app.post("/customer/book", requestService);
+app.get("/customer/active-requests", getActiveRequests);
+app.get("/customer/past-requests", getPastRequests);
 
 
 
