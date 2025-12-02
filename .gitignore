@@ -25,5 +25,5 @@ dist-ssr
 
 
 .env
-
+venv
 node_modules/

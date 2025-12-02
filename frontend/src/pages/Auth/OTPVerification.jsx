@@ -2,11 +2,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
+import { verifyCustomerOtp } from '../../api/customer'
 import './Auth.css'
 
 const OTPVerification = () => {
   const navigate = useNavigate()
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [isVerifying, setIsVerifying] = useState(false)
 
   const handleOtpChange = (index, value) => {
     // making sure that the input is only digits and updating the otp state
@@ -24,10 +27,39 @@ const OTPVerification = () => {
     }
   }
 
-  // if user is verified, they should be navigated to the dashboard 
-  // (will be improved later when kamal implements the otp system on the backend)
-  const handleVerify = () => {
-    navigate('/customer/dashboard')
+  const readPendingCustomerId = () => {
+    if (typeof window === 'undefined') return null
+    return window.localStorage.getItem('pendingCustomerId') ?? window.localStorage.getItem('customerId')
+  }
+
+  // if user is verified, navigate to the dashboard after confirming OTP with backend
+  const handleVerify = async () => {
+    const customerId = readPendingCustomerId()
+    if (!customerId) {
+      setErrorMessage('We could not find a pending signup. Please sign up again.')
+      return
+    }
+
+    const code = otp.join('')
+    if (code.length !== 6) {
+      setErrorMessage('Please enter the 6-digit OTP.')
+      return
+    }
+
+    try {
+      setIsVerifying(true)
+      setErrorMessage(null)
+      await verifyCustomerOtp({ id: customerId, otp: Number(code) })
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('customerId', customerId)
+        window.localStorage.removeItem('pendingCustomerId')
+      }
+      navigate('/customer/dashboard')
+    } catch (error) {
+      setErrorMessage(error.message ?? 'Verification failed. Please try again.')
+    } finally {
+      setIsVerifying(false)
+    }
   }
 
   return (
@@ -69,8 +101,10 @@ const OTPVerification = () => {
             {/*this part is not yet implemented since it requires the logic from the backend*/}
             <p className="resend-text">Resend in 30s</p>
 
-            <button className="btn-verify" onClick={handleVerify}>
-              Verify
+            {errorMessage && <p className="form-feedback error">{errorMessage}</p>}
+
+            <button className="btn-verify" onClick={handleVerify} disabled={isVerifying}>
+              {isVerifying ? 'Verifying...' : 'Verify'}
             </button>
           </div>
         </div>

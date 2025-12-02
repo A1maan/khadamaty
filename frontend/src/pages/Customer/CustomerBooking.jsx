@@ -1,47 +1,122 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { useMockData } from '../../context/MockDataContext'
+import { fetchServices, createCustomerBooking } from '../../api/customer'
 import './CustomerPages.css'
+
 const CustomerBooking = () => {
   const { providerId } = useParams()
-  const { addCustomerRequest, saveProviderForLater, providerMap, publicServices } = useMockData()
-
-  // This is the structure for the provider 
-  const provider = useMemo(
-    () => providerMap[providerId] ?? publicServices[0],
-    [providerId, providerMap, publicServices]
-  )
+  const [service, setService] = useState(null)
   const [formValues, setFormValues] = useState({ date: '', time: '', notes: '' })
   const [feedback, setFeedback] = useState('')
-  // This will change the values saved in the form
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loadingService, setLoadingService] = useState(true)
+  const [serviceError, setServiceError] = useState(null)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    setLoadingService(true)
+    fetchServices(null, { signal: controller.signal })
+      .then((data) => {
+        const services = data?.services ?? []
+        const match = services.find((item) => (item._id ?? item.id ?? '').toString() === providerId)
+        if (!match) {
+          setService(null)
+          setServiceError('Service not found. Please pick another provider.')
+          return
+        }
+        const priceSuffix = match.priceType ? ` / ${match.priceType}` : ''
+        setService({
+          id: (match._id ?? match.id ?? '').toString(),
+          name: match.name ?? 'Service',
+          description: match.description ?? 'Description coming soon.',
+          category: match.category ?? 'general',
+          price: match.price,
+          pricing: match.price ? `SAR ${match.price}${priceSuffix}` : match.pricing ?? 'Pricing on request',
+          demand: match.demand ?? 'Medium',
+          rating: match.rating ?? 4.8,
+          reviews: match.reviews ?? 0,
+          availability: match.availability ?? 'Within 24 hours',
+        })
+        setServiceError(null)
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') return
+        setService(null)
+        setServiceError(error.message ?? 'Failed to load service details.')
+      })
+      .finally(() => {
+        setLoadingService(false)
+      })
+
+    return () => controller.abort()
+  }, [providerId])
+
   const handleChange = (event) => {
     const { name, value } = event.target
     setFormValues((prev) => ({ ...prev, [name]: value }))
   }
-  // This fucntion will handle the booking action
-  const handleBooking = (event) => {
+
+  const handleBooking = async (event) => {
     event.preventDefault()
+    if (!service) {
+      setFeedback('Please choose a valid provider.')
+      return
+    }
     if (!formValues.date || !formValues.time) {
       setFeedback('Please select a date and time to continue.')
       return
     }
-    addCustomerRequest({
-      providerId: provider.id,
-      date: formValues.date,
-      time: formValues.time,
-      notes: formValues.notes,
-    })
-    setFeedback('Request submitted! You can track it from Active Requests.')
-    setFormValues({ date: '', time: '', notes: '' })
-  }
-  // This function will handle save the booking for later 
-  const handleSaveForLater = () => {
-    saveProviderForLater(provider.id, formValues.notes)
-    setFeedback('Provider saved. You can book whenever you are ready.')
+    const customerId = typeof window !== 'undefined' ? window.localStorage.getItem('customerId') : null
+    if (!customerId) {
+      setFeedback('Please sign in before booking.')
+      return
+    }
+    const datetime = new Date(`${formValues.date}T${formValues.time}`)
+    if (Number.isNaN(datetime.getTime())) {
+      setFeedback('Invalid date or time selected.')
+      return
+    }
+
+    try {
+      setIsSubmitting(true)
+      setFeedback('')
+      await createCustomerBooking(customerId, {
+        serviceId: service.id,
+        datetime: datetime.toISOString(),
+        notes: formValues.notes,
+      })
+      setFeedback('Request submitted! You can track it from Active Requests.')
+      setFormValues({ date: '', time: '', notes: '' })
+    } catch (error) {
+      setFeedback(error.message ?? 'Booking failed. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  if (!provider) {
+  const handleSaveForLater = () => {
+    setFeedback('Saving for later will be available soon.')
+  }
+
+  if (loadingService) {
+    return (
+      <div className="customer-page">
+        <Sidebar userType="customer" />
+        <main className="customer-content">
+          <header className="customer-hero">
+            <div>
+              <p className="eyebrow">Booking</p>
+              <h1>Loading service...</h1>
+              <p>Fetching up-to-date service details.</p>
+            </div>
+          </header>
+        </main>
+      </div>
+    )
+  }
+
+  if (serviceError || !service) {
     return (
       <div className="customer-page">
         <Sidebar userType="customer" />
@@ -50,7 +125,7 @@ const CustomerBooking = () => {
             <div>
               <p className="eyebrow">Booking</p>
               <h1>Provider not found</h1>
-              <p>head back to browse and pick another service.</p>
+              <p>{serviceError ?? 'Head back to browse and pick another service.'}</p>
             </div>
             <Link to="/customer/browse" className="btn-secondary-link">
               Back to providers
@@ -68,8 +143,8 @@ const CustomerBooking = () => {
         <header className="customer-hero">
           <div>
             <p className="eyebrow">Booking</p>
-            <h1>{provider.name}</h1>
-            <p>{provider.description}</p>
+            <h1>{service.name}</h1>
+            <p>{service.description}</p>
           </div>
           <Link to="/customer/browse" className="btn-secondary-link">
             Back to providers
@@ -79,11 +154,11 @@ const CustomerBooking = () => {
         <div className="booking-card">
           <div className="booking-details">
             <h2>Overview</h2>
-            <p><strong>Category:</strong> {provider.category}</p>
-            <p><strong>Pricing:</strong> {provider.pricing}</p>
-            <p><strong>Demand:</strong> {provider.demand}</p>
-            <p><strong>Rating:</strong> {provider.rating} ★ ({provider.reviews} reviews)</p>
-            <p><strong>Availability:</strong> {provider.availability}</p>
+            <p><strong>Category:</strong> {service.category}</p>
+            <p><strong>Pricing:</strong> {service.pricing}</p>
+            <p><strong>Demand:</strong> {service.demand}</p>
+            <p><strong>Rating:</strong> {service.rating} ★ ({service.reviews} reviews)</p>
+            <p><strong>Availability:</strong> {service.availability}</p>
           </div>
           {/* This for mwwill handle the booking details */}
           <form className="booking-details" onSubmit={handleBooking}>
@@ -106,8 +181,8 @@ const CustomerBooking = () => {
                 onChange={handleChange}
               ></textarea>
             </label>
-            <button type="submit" className="btn-primary-solid">
-              Confirm Request
+            <button type="submit" className="btn-primary-solid" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Confirm Request'}
             </button>
           </form>
           {/* The user have the option to save it for later*/}
