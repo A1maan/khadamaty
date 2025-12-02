@@ -47,34 +47,39 @@ The application will open at `http://localhost:3000`
 ## 🏗️ Project Structure
 
 ```
-khadamaty/
-├── src/
-│   ├── components/
-│   │   ├── Header/
-│   │   └── Sidebar/
-│   ├── pages/
-│   │   ├── LandingPage/
-│   │   ├── Auth/
-│   │   │   ├── SignUpCustomer.jsx
-│   │   │   ├── SignUpSelection.jsx
-│   │   │   └── OTPVerification.jsx
-│   │   ├── Customer/
-│   │   │   └── CustomerDashboard.jsx
-│   │   ├── Provider/
-│   │   │   ├── ProviderServices.jsx
-│   │   │   ├── PendingRequests.jsx
-│   │   │   ├── ActiveRequests.jsx
-│   │   │   ├── PastRequests.jsx
-│   │   │   └── MyReviews.jsx
-│   │   └── Admin/
-│   │       ├── AdminDashboard.jsx
-│   │       └── AdminUsers.jsx
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
-├── index.html
-├── package.json
-└── vite.config.js
+SWE363-Project/
+├── README.md
+├── package.json                # Workspace configuration (scripts, shared tools)
+├── backend-khadamaty/          # Express + MongoDB API
+│   ├── index.js
+│   ├── customer.js
+│   ├── schemas.js
+│   ├── seed.js
+│   ├── package.json
+│   └── package-lock.json
+├── frontend/                   # React/Vite application
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   └── src/
+│       ├── api/
+│       │   ├── client.js       # shared fetch wrapper
+│       │   └── customer.js     # customer-specific API helpers
+│       ├── components/
+│       │   ├── Header/
+│       │   └── Sidebar/
+│       ├── context/
+│       ├── data/
+│       ├── pages/
+│       │   ├── LandingPage/
+│       │   ├── Auth/
+│       │   ├── Customer/
+│       │   ├── Provider/
+│       │   └── Admin/
+│       ├── App.jsx
+│       ├── main.jsx
+│       └── index.css
+└── venv/ (optional)            # Local Python virtualenv used during development
 ```
 
 ## 🎨 Design System
