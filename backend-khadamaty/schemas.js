@@ -60,3 +60,13 @@ const requestSchema = new mongoose.Schema({
 );
 
 export const Request = mongoose.model("Request", requestSchema);
+
+
+const savedServicesSchema = new mongoose.Schema({
+    serviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
+    customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
+    createdAt: { type: mongoose.Schema.Types.Date, default: Date.now },
+    updatedAt: { type: mongoose.Schema.Types.Date, default: Date.now },
+});
+
+export const SavedService = mongoose.model("SavedService", savedServicesSchema);
