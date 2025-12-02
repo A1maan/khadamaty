@@ -23,11 +23,11 @@ export async function handleSignup(req, res) {
         const { name, email, password, phone } = req.body;
         const found = await Customer.findOne({ email: email });
         if (found) {
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: "This email is already registered",
                 data: null
-            })
+            });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const otp = generateOTP();
@@ -35,7 +35,7 @@ export async function handleSignup(req, res) {
         const customer = new Customer({ name, email, password: hashedPassword, phone, otp, otpExpiry });
         await customer.save();
         console.log("DEV MODE - Generated OTP:", otp);
-        res.status(201).json({ message: "Customer created successfully" });
+        res.status(201).json({ message: "Customer created successfully", customerId: customer._id });
         await sendOTP(customer.otp, customer.email); // Call the sendOTP function
     } catch (error) {
         console.error("Error creating customer:", error);
@@ -83,15 +83,18 @@ export async function sendOTP(otp, email) {
 export async function verifyOtp(req, res) {
     try {
         const { id, otp } = req.body;
-        const customer = await Customer.findOne({ id: id, otpExpiry: { $gt: Date.now() } });
+        const customer = await Customer.findOne({ _id: id, otp: otp, otpExpiry: { $gt: Date.now() } });
         if (!customer) {
             return res.status(400).json({ message: "Invalid or expired OTP" });
         }
         customer.isVerified = true;
+        customer.otp = null;
+        customer.otpExpiry = null;
         await customer.save();
         res.status(200).json({
             message: "Customer verified successfully",
             customer: customer,
+            customerId: customer._id
         });
     } catch (error) {
         console.error("Error verifying OTP:", error);
@@ -102,7 +105,8 @@ export async function verifyOtp(req, res) {
 export async function getServices(req, res) {
     try {
         const { category } = req.query;
-        const services = await Service.find({ category: category });
+        const filter = category && category !== "all" ? { category } : {};
+        const services = await Service.find(filter);
         res.status(200).json({ message: "Services fetched successfully", services: services });
     } catch (error) {
         console.error("Error fetching services:", error);
@@ -113,7 +117,10 @@ export async function getServices(req, res) {
 
 export async function requestService(req, res) {
     try {
-        customerId = req.query.id;
+        const customerId = req.query.id;
+        if (!customerId) {
+            return res.status(400).json({ message: "Customer ID is required" });
+        }
         const { serviceId, datetime, notes } = req.body;
         const newRequest = new Request({ serviceId, datetime, notes, customerId })
         await newRequest.save();
@@ -132,12 +139,14 @@ export async function requestService(req, res) {
 export async function getActiveRequests(req, res) {
     try {
         const { customerId } = req.query;
-        const requests = await Request.find({ customerId: customerId, status: "active" });
-        if (!requests) {
-            return res.status(404).json({ message: "No active requests found" });
-        } else {
-            res.status(200).json({ message: "Requests fetched successfully", requests: requests });
+        if (!customerId) {
+            return res.status(400).json({ message: "Customer ID is required" });
         }
+        const requests = await Request.find({ customerId: customerId, status: "active" });
+        if (!requests || requests.length === 0) {
+            return res.status(404).json({ message: "No active requests found" });
+        }
+        res.status(200).json({ message: "Requests fetched successfully", requests: requests });
     } catch (error) {
         console.error("Error fetching requests:", error);
         res.status(500).json({ message: "Error fetching requests" });
@@ -146,12 +155,14 @@ export async function getActiveRequests(req, res) {
 export async function getPastRequests(req, res) {
     try {
         const { customerId } = req.query;
-        const requests = await Request.find({ customerId: customerId, status: { $in: ["completed", "cancelled"] } });
-        if (!requests) {
-            return res.status(404).json({ message: "No past requests found" });
-        } else {
-            res.status(200).json({ message: "Requests fetched successfully", requests: requests });
+        if (!customerId) {
+            return res.status(400).json({ message: "Customer ID is required" });
         }
+        const requests = await Request.find({ customerId: customerId, status: { $in: ["completed", "cancelled"] } });
+        if (!requests || requests.length === 0) {
+            return res.status(404).json({ message: "No past requests found" });
+        }
+        res.status(200).json({ message: "Requests fetched successfully", requests: requests });
     } catch (error) {
         console.error("Error fetching requests:", error);
         res.status(500).json({ message: "Error fetching requests" });
@@ -186,7 +197,6 @@ export async function getSavedServices(req, res) {
         return;
     }
 }
-
 
 
 

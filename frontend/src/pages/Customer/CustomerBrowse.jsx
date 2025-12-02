@@ -3,13 +3,15 @@ import { useMemo, useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import { serviceCategories } from '../../data/customerData'
-import { useMockData } from '../../context/MockDataContext'
+import { fetchServices } from '../../api/customer'
 import './CustomerPages.css'
 
 const CustomerBrowse = () => {
   const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') ?? '')
-  const { publicServices } = useMockData()
+  const [services, setServices] = useState([])
+  const [servicesError, setServicesError] = useState(null)
+  const [isLoadingServices, setIsLoadingServices] = useState(false)
 
   useEffect(() => {
     // keep the search box synced with the URL query
@@ -25,6 +27,45 @@ const CustomerBrowse = () => {
     rating: Number(searchParams.get('rating') ?? 0),
   }), [searchParams])
 
+  useEffect(() => {
+    const controller = new AbortController()
+    setIsLoadingServices(true)
+    fetchServices(filters.category, { signal: controller.signal })
+      .then((data) => {
+        const normalized = (data?.services ?? []).map((service) => {
+          const serviceId = (service._id ?? service.id ?? '').toString()
+          const priceSuffix = service.priceType ? ` / ${service.priceType}` : ''
+          return {
+            id: serviceId,
+            name: service.name ?? 'New service',
+            category: service.category ?? 'general',
+            description: service.description ?? 'Description coming soon.',
+            price: service.price,
+            pricing: service.price ? `SAR ${service.price}${priceSuffix}` : service.pricing ?? 'Pricing on request',
+            priceRange: service.priceRange ?? '100-200',
+            availability: service.availability ?? 'Within 24 hours',
+            availabilityTag: service.availabilityTag ?? '24h',
+            rating: service.rating ?? 4.8,
+            reviews: service.reviews ?? 0,
+            demand: service.demand ?? 'Medium',
+            status: service.status ?? 'Active',
+          }
+        })
+        setServices(normalized)
+        setServicesError(null)
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') return
+        setServices([])
+        setServicesError(error.message ?? 'Failed to load services')
+      })
+      .finally(() => {
+        setIsLoadingServices(false)
+      })
+
+    return () => controller.abort()
+  }, [filters.category])
+
   const priceCopy = {
     '100-200': 'SAR 100 - 200',
     '200-400': 'SAR 200 - 400',
@@ -39,7 +80,7 @@ const CustomerBrowse = () => {
 
   const filteredProviders = useMemo(() => (
     // run all filter rules plus the text search in one pass for now
-    publicServices
+    services
       .filter((provider) => provider.status !== 'Draft')
       .filter((provider) => {
         if (filters.category !== 'all' && provider.category !== filters.category) return false
@@ -53,7 +94,7 @@ const CustomerBrowse = () => {
         }
         return true
       })
-  ), [publicServices, filters, searchTerm])
+  ), [services, filters, searchTerm])
 
   const hasActiveFilters = filters.category !== 'all' || filters.priceRange !== 'any' || filters.availability !== 'any' || Boolean(filters.rating)
 
@@ -132,6 +173,18 @@ const CustomerBrowse = () => {
             >
               Clear Filters
             </Link>
+          </div>
+        )}
+
+        {isLoadingServices && (
+          <div className="loading-state">
+            <p>Loading services...</p>
+          </div>
+        )}
+
+        {servicesError && (
+          <div className="error-state">
+            <p>{servicesError}</p>
           </div>
         )}
 
