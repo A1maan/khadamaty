@@ -217,5 +217,20 @@ export async function getSavedServices(req, res) {
     }
 }
 
+export async function unsaveService(req, res) {
+    try {
+        const { customerId, savedServiceId } = req.body;
+        const service = SavedService.findOneAndDelete({ customerId: customerId, serviceId: savedServiceId });
+        if (!service) {
+            return res.status(404).json({ message: "Service not found" });
+        }
+        res.status(200).json({ message: "Service unsaved successfully" });
+    } catch (error) {
+        console.error("Error unsaving service:", error);
+        res.status(500).json({ message: "Error unsaving service" });
+    }
+}
+
+
 
 
