@@ -1,15 +1,19 @@
 /* otp screen to mimic verifying email or phone */
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import { verifyCustomerOtp } from '../../api/customer'
 import './Auth.css'
 
 const OTPVerification = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [errorMessage, setErrorMessage] = useState(null)
   const [isVerifying, setIsVerifying] = useState(false)
+
+  // get email from navigation state or fallback
+  const email = location.state?.email || 'your email'
 
   const handleOtpChange = (index, value) => {
     // making sure that the input is only digits and updating the otp state
@@ -65,7 +69,7 @@ const OTPVerification = () => {
   return (
     <div className="auth-page">
       <Header showSignUp={true} signUpText="Sign IN" signUpLink="/signin" />
-      
+
       <main className="auth-main">
         <div className="otp-icon">
           <ion-icon name="mail-open-outline"></ion-icon>
@@ -74,10 +78,10 @@ const OTPVerification = () => {
         <div className="otp-container">
           <div className="otp-card">
             <h2>OTP Verification</h2>
-            
+
             <p className="otp-message">
               An OTP has been sent to the following email address:<br />
-              <strong>Example@domain.com</strong>
+              <strong>{email}</strong>
             </p>
 
             {/*

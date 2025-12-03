@@ -7,6 +7,18 @@ export const fetchServices = (category, options = {}) => {
   return apiRequest(`/customer/services${normalizedCategory}`, { method: 'GET', ...options });
 };
 
+export const signupCustomer = (payload) =>
+  apiRequest('/customer/signup', {
+    method: 'POST',
+    body: payload,
+  });
+
+export const signinCustomer = (payload) =>
+  apiRequest('/customer/signin', {
+    method: 'POST',
+    body: payload,
+  });
+
 export const verifyCustomerOtp = ({ id, otp }) =>
   apiRequest('/customer/verify-otp', {
     method: 'POST',

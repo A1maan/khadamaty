@@ -2,6 +2,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
+import { signinCustomer } from '../../api/customer'
 import './Auth.css'
 
 // this is just a global object to hold the user roles with their specific descriptions and configurations
@@ -26,22 +27,23 @@ const configByRole = {
 const SignIn = ({ role = 'customer' }) => {
   // set up navigation and form state
   const navigate = useNavigate()
-  const [formData, setFormData] = useState({ email: '', password: '' }) 
-  
+  const [formData, setFormData] = useState({ email: '', password: '' })
+  const [error, setError] = useState('')
+
   // we look up the config for the role passed in, but if it's invalid or doesn't exist,
   // we just use the customer config as the default.
   const config = useMemo(() => configByRole[role] ?? configByRole.customer, [role])
-  
+
   // build the header differently based on role, admins get a locked-down version with no sign up link,
   // but customers and providers can sign up. providers also get directed to the provider signup page
   const headerProps =
     role === 'admin'
       ? { showSignUp: false }
       : {
-          showSignUp: true,
-          signUpText: 'Sign Up',
-          signUpLink: role === 'provider' ? '/signup/provider' : '/signup',
-        }
+        showSignUp: true,
+        signUpText: 'Sign Up',
+        signUpLink: role === 'provider' ? '/signup/provider' : '/signup',
+      }
 
   // update form data when inputs change
   const handleChange = (e) => {
@@ -52,20 +54,35 @@ const SignIn = ({ role = 'customer' }) => {
   }
 
   // submit form and redirect to dashboard
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    navigate(config.redirect)
+    setError('')
+    try {
+      // Only call customer signin for now as provider/admin APIs might differ
+      if (role === 'customer') {
+        await signinCustomer({
+          email: formData.email,
+          password: formData.password
+        })
+      }
+      // For other roles or after success, navigate
+      navigate(config.redirect)
+    } catch (err) {
+      setError(err.message || 'Sign in failed')
+    }
   }
 
   return (
     <div className="auth-page">
       <Header {...headerProps} />
-      
+
       <main className="auth-main">
         <div className="auth-container">
           <div className="auth-card">
             <h2>{config.title}</h2>
             <p className="auth-description">{config.description}</p>
+
+            {error && <div className="error-message">{error}</div>}
 
             {/* form with email and password inputs */}
             <form className="auth-form" onSubmit={handleSubmit}>

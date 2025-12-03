@@ -22,7 +22,7 @@ import { updateProviderRequestStatus } from './provider.js';
 
 dotenv.config();
 
-const port = 3000;
+const port = 8000;
 const app = express();
 
 app.use(cors());
@@ -49,6 +49,7 @@ db.once("open", () => {
 // Customer endpoints
 app.post("/customer/signup", handleSignup);
 app.post("/customer/verify-otp", verifyOtp);
+app.post("/customer/signin", handleSigniIn);
 app.get("/customer/services", getServices);
 app.post("/customer/book", requestService);
 app.get("/customer/active-requests", getActiveRequests);

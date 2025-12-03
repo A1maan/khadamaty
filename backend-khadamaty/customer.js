@@ -21,7 +21,7 @@ export const transporter = nodemailer.createTransport({
 export async function handleSignup(req, res) {
     try {
         const { name, email, password, phone } = req.body;
-        const found = await Customer.findOne({ email: email });
+        const found = await Customer.findOne({ email: email, isVerified: true });
         if (found) {
             return res.status(400).json({
                 success: false,
@@ -45,7 +45,7 @@ export async function handleSignup(req, res) {
 
 export async function handleSigniIn(req, res) {
     const { email, password } = req.body;
-    const customer = await Customer.findOne({ email: email });
+    const customer = await Customer.findOne({ email: email, isVerified: true });
     if (!customer) {
         return res.status(400).json({ message: "Invalid email" });
     }

@@ -1,17 +1,20 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
+import { signupCustomer } from '../../api/customer'
 import './Auth.css'
 
-// customer signup form - collects email, phone, and password
+// customer signup form - collects name, email, phone, and password
 const SignUpCustomer = () => {
   const navigate = useNavigate()
   // track form inputs as the user types
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     mobile: '',
     password: ''
   })
+  const [error, setError] = useState('')
 
   const handleChange = (e) => {
     // capture whatever input changed and update the form state dynamically
@@ -21,17 +24,32 @@ const SignUpCustomer = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // send them to verify their email after signup
-    navigate('/signup/verify')
+    setError('')
+    try {
+      const response = await signupCustomer({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.mobile,
+        password: formData.password
+      })
+      // save the pending customer id so the otp page knows who to verify
+      if (response?.customerId) {
+        localStorage.setItem('pendingCustomerId', response.customerId)
+      }
+      // send them to verify their email after signup
+      navigate('/signup/verify', { state: { email: formData.email } })
+    } catch (err) {
+      setError(err.message || 'Signup failed')
+    }
   }
 
   return (
     <div className="auth-page">
       {/* show header with sign in link - no sign up button since they're already signing up */}
       <Header showSignUp={true} signUpText="Sign IN" signUpLink="/signin" />
-      
+
       <main className="auth-main">
         <div className="auth-container">
           {/* centered card with form */}
@@ -40,8 +58,23 @@ const SignUpCustomer = () => {
             <p className="auth-description">
               Sign up to access our services and connect with professional service providers.
             </p>
-            
+
+            {error && <div className="error-message">{error}</div>}
+
             <form className="auth-form" onSubmit={handleSubmit}>
+              {/* name input */}
+              <div className="form-group">
+                <label>Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
               {/* email input */}
               <div className="form-group">
                 <label>Email Address</label>
