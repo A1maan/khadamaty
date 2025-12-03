@@ -10,6 +10,16 @@ import { getActiveRequests } from './customer.js';
 import { getPastRequests } from './customer.js';
 import { unsaveService } from './customer.js';
 
+import { handleProviderSignup } from './provider.js';
+import { verifyProviderOtp } from './provider.js';
+import { handleProviderSignin } from './provider.js';
+import { getProviderServices } from './provider.js';
+import { createProviderService } from './provider.js';
+import { updateProviderService } from './provider.js';
+import { deleteProviderService } from './provider.js';
+import { getProviderRequests } from './provider.js';
+import { updateProviderRequestStatus } from './provider.js';
+
 dotenv.config();
 
 const port = 3000;
@@ -36,6 +46,7 @@ db.once("open", () => {
 });
 
 
+// Customer endpoints
 app.post("/customer/signup", handleSignup);
 app.post("/customer/verify-otp", verifyOtp);
 app.get("/customer/services", getServices);
@@ -43,6 +54,17 @@ app.post("/customer/book", requestService);
 app.get("/customer/active-requests", getActiveRequests);
 app.get("/customer/past-requests", getPastRequests);
 app.delete("/customer/unsave-service", unsaveService);
+
+// Provider endpoints
+app.post("/provider/signup", handleProviderSignup);
+app.post("/provider/verify-otp", verifyProviderOtp);
+app.post("/provider/signin", handleProviderSignin);
+app.get("/provider/services", getProviderServices);
+app.post("/provider/services", createProviderService);
+app.put("/provider/services/:serviceId", updateProviderService);
+app.delete("/provider/services/:serviceId", deleteProviderService);
+app.get("/provider/requests", getProviderRequests);
+app.patch("/provider/requests/:requestId", updateProviderRequestStatus);
 
 
 

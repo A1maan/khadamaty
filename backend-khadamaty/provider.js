@@ -1,0 +1,166 @@
+import { ServiceProvider, Service, Request } from "./schemas.js";
+import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
+
+export const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
+
+function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000);
+}
+
+async function sendOTP(otp, email) {
+    try {
+        const mailOptions = {
+            from: `"Khadamaty" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: "Your OTP from Khadamaty (Provider)",
+            html: `<p>Your OTP: <strong>${otp}</strong><br>This code will expire in 1 minute.</p>`
+        };
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (err) {
+        console.error("Error sending provider OTP email", err);
+        return false;
+    }
+}
+
+export async function handleProviderSignup(req, res) {
+    try {
+        const { name, email, password, phone, nationalID } = req.body;
+        const found = await ServiceProvider.findOne({ email });
+        if (found) {
+            return res.status(400).json({ message: "This email is already registered" });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const otp = generateOTP();
+        const otpExpiry = new Date(Date.now() + 60 * 1000); // 1 minute expiry
+        const provider = new ServiceProvider({ name, email, password: hashedPassword, phone, nationalID, otp, otpExpiry, isVerified: false });
+        await provider.save();
+        await sendOTP(otp, email);
+        res.status(201).json({ message: "Provider created. Check email for OTP.", providerId: provider._id });
+    } catch (err) {
+        console.error("Provider signup error", err);
+        res.status(500).json({ message: "Error signing up provider" });
+    }
+}
+
+export async function verifyProviderOtp(req, res) {
+    try {
+        const { id, otp } = req.body;
+        const provider = await ServiceProvider.findOne({ _id: id, otp, otpExpiry: { $gt: Date.now() } });
+        if (!provider) {
+            return res.status(400).json({ message: "Invalid or expired OTP" });
+        }
+        provider.isVerified = true;
+        provider.otp = null;
+        provider.otpExpiry = null;
+        await provider.save();
+        res.status(200).json({ message: "Provider verified", provider: provider });
+    } catch (err) {
+        res.status(500).json({ message: "Error verifying OTP" });
+    }
+}
+
+export async function handleProviderSignin(req, res) {
+    try {
+        const { email, password } = req.body;
+        const provider = await ServiceProvider.findOne({ email });
+        if (!provider) return res.status(400).json({ message: "Invalid email" });
+        const isPasswordValid = await bcrypt.compare(password, provider.password);
+        if (!isPasswordValid) return res.status(400).json({ message: "Invalid password" });
+        if (!provider.isVerified) return res.status(403).json({ message: "Provider not verified yet" });
+        res.status(200).json({ message: "Provider signed in successfully", providerId: provider._id, provider });
+    } catch (err) {
+        res.status(500).json({ message: "Error signing in provider" });
+    }
+}
+
+// CRUD for provider's services
+export async function getProviderServices(req, res) {
+    try {
+        const { providerId } = req.query;
+        if (!providerId) return res.status(400).json({ message: "providerId required" });
+        const services = await Service.find({ providerId });
+        res.status(200).json({ services });
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching provider services" });
+    }
+}
+
+export async function createProviderService(req, res) {
+    try {
+        const { providerId } = req.query;
+        const { name, category, description, price, priceType, image } = req.body;
+        if (!providerId) return res.status(400).json({ message: "providerId required" });
+        const service = new Service({ name, category, description, price, priceType, image, providerId });
+        await service.save();
+        res.status(201).json({ message: "Service created", service });
+    } catch (err) {
+        res.status(500).json({ message: "Error creating service" });
+    }
+}
+
+export async function updateProviderService(req, res) {
+    try {
+        const { serviceId } = req.params;
+        const { name, category, description, price, priceType, image } = req.body;
+        const service = await Service.findByIdAndUpdate(
+            serviceId,
+            { name, category, description, price, priceType, image, updatedAt: Date.now() },
+            { new: true }
+        );
+        if (!service) return res.status(404).json({ message: "Service not found" });
+        res.status(200).json({ message: "Service updated", service });
+    } catch (err) {
+        res.status(500).json({ message: "Error updating service" });
+    }
+}
+
+export async function deleteProviderService(req, res) {
+    try {
+        const { serviceId } = req.params;
+        const result = await Service.findByIdAndDelete(serviceId);
+        if (!result) return res.status(404).json({ message: "Service not found" });
+        res.status(200).json({ message: "Service deleted" });
+    } catch (err) {
+        res.status(500).json({ message: "Error deleting service" });
+    }
+}
+
+// Provider requests/jobs management
+export async function getProviderRequests(req, res) {
+    try {
+        const { providerId, status } = req.query;
+        if (!providerId) return res.status(400).json({ message: "providerId required" });
+        // Find all provider services
+        const services = await Service.find({ providerId }, { _id: 1 });
+        if (!services.length) return res.status(200).json({ requests: [] });
+        const serviceIds = services.map(s => s._id);
+        // Find requests for those services
+        const statusFilter = status ? { status } : {};
+        const requests = await Request.find({ serviceId: { $in: serviceIds }, ...statusFilter });
+        res.status(200).json({ requests });
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching provider requests" });
+    }
+}
+
+export async function updateProviderRequestStatus(req, res) {
+    try {
+        const { requestId } = req.params;
+        const { status } = req.body;
+        const requestObj = await Request.findByIdAndUpdate(requestId, { status, updatedAt: Date.now() }, { new: true });
+        if (!requestObj) return res.status(404).json({ message: "Request not found" });
+        res.status(200).json({ message: "Request status updated", request: requestObj });
+    } catch (err) {
+        res.status(500).json({ message: "Error updating request status" });
+    }
+}
