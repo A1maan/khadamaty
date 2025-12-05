@@ -1,18 +1,62 @@
 /* this admin dashboard shows approvals queue and a quick top providers view */
+import { useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { useMockData } from '../../context/MockDataContext'
+import { fetchAllServiceProviders, approveProvider, rejectProvider } from '../../api/admin'
 import './Admin.css'
 
 const AdminDashboard = () => {
-  /* pulling admin data and helper functions from mock context */
-  const { adminData, approveProviderSubmission, rejectProviderSubmission, pushToast } = useMockData()
+  const [providers, setProviders] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  /* filter providers waiting for approval */
-  const pendingApprovals = adminData.providerUsers.filter((user) => user.status === 'Pending')
+  useEffect(() => {
+    const loadProviders = async () => {
+      try {
+        setLoading(true)
+        const response = await fetchAllServiceProviders()
+        const providerData = response?.data || []
+        setProviders(providerData)
+        setError(null)
+      } catch (err) {
+        setError(err.message || 'Failed to load providers')
+        setProviders([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadProviders()
+  }, [])
 
-  /* get top activated providers (first 3 only) */
-  const topProviders = adminData.providerUsers
-    .filter((user) => user.status === 'Activated')
+  const handleApprove = async (providerId) => {
+    try {
+      await approveProvider(providerId, false)
+      // Refresh providers list
+      const response = await fetchAllServiceProviders()
+      setProviders(response?.data || [])
+      alert('Provider approved successfully')
+    } catch (err) {
+      alert('Failed to approve provider: ' + (err.message || 'Unknown error'))
+    }
+  }
+
+  const handleReject = async (providerId) => {
+    try {
+      await rejectProvider(providerId)
+      // Refresh providers list
+      const response = await fetchAllServiceProviders()
+      setProviders(response?.data || [])
+      alert('Provider rejected successfully')
+    } catch (err) {
+      alert('Failed to reject provider: ' + (err.message || 'Unknown error'))
+    }
+  }
+
+  /* filter providers waiting for approval (not verified) */
+  const pendingApprovals = providers.filter((user) => !user.isVerified)
+
+  /* get top activated providers (verified and featured, first 3 only) */
+  const topProviders = providers
+    .filter((user) => user.isVerified && user.isFeatured)
     .slice(0, 3)
 
   return (
@@ -22,21 +66,24 @@ const AdminDashboard = () => {
       <main className="admin-content">
         <section className="approvals-section">
           <h2>Incoming Approvals</h2>
+          {loading && <div className="content-placeholder">Loading providers...</div>}
+          {error && <div className="content-placeholder error">{error}</div>}
           <div className="approvals-grid">
             {/* fallback if no pending approvals */}
-            {pendingApprovals.length === 0 && (
+            {!loading && !error && pendingApprovals.length === 0 && (
               <div className="content-placeholder">No pending profiles right now.</div>
             )}
 
             {/* render pending approval cards */}
             {pendingApprovals.map((approval) => (
-              <div key={approval.id} className="approval-card">
+              <div key={approval._id || approval.id} className="approval-card">
                 <ion-icon name="person-circle-outline"></ion-icon>
 
                 <div className="approval-info">
-                  <h4>{approval.name}</h4>
+                  <h4>{approval.name || 'Unnamed Provider'}</h4>
+                  <p>{approval.email || ''}</p>
 
-                  <button className="btn-view" onClick={() => pushToast(`Viewing ${approval.name}`)}>
+                  <button className="btn-view" onClick={() => alert(`Viewing ${approval.name}`)}>
                     View Profile
                   </button>
                 </div>
@@ -45,7 +92,7 @@ const AdminDashboard = () => {
                   {/* approve provider from queue */}
                   <button
                     className="btn-approve"
-                    onClick={() => approveProviderSubmission(approval.id)}
+                    onClick={() => handleApprove(approval._id || approval.id)}
                   >
                     <ion-icon name="checkbox-outline"></ion-icon>
                   </button>
@@ -53,7 +100,7 @@ const AdminDashboard = () => {
                   {/* reject provider from queue */}
                   <button
                     className="btn-reject"
-                    onClick={() => rejectProviderSubmission(approval.id)}
+                    onClick={() => handleReject(approval._id || approval.id)}
                   >
                     <ion-icon name="close-circle-outline"></ion-icon>
                   </button>
@@ -67,15 +114,18 @@ const AdminDashboard = () => {
           <h2>Most Requested Providers</h2>
           <div className="providers-list">
             {/* quick overview of top activated providers */}
+            {topProviders.length === 0 && !loading && (
+              <div className="content-placeholder">No featured providers yet.</div>
+            )}
             {topProviders.map((provider) => (
-              <div key={provider.id} className="provider-item">
+              <div key={provider._id || provider.id} className="provider-item">
                 <ion-icon name="person-circle-outline"></ion-icon>
 
                 <div className="provider-details">
-                  <h4>{provider.name}</h4>
+                  <h4>{provider.name || 'Unnamed Provider'}</h4>
 
-                  {/* show service name if exists, else default text */}
-                  <p>{provider.service ?? 'Popular services'}</p>
+                  {/* show email if exists, else default text */}
+                  <p>{provider.email || 'Popular services'}</p>
                 </div>
               </div>
             ))}

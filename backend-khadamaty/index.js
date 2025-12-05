@@ -29,6 +29,11 @@ import { getPastRequestsSP } from './provider.js';
 import { getAllCustomers } from './admin.js';
 import { getAllServiceProviders } from './admin.js';
 import { getAllServices } from './admin.js';
+import { approveProvider } from './admin.js';
+import { rejectProvider } from './admin.js';
+import { updateProviderStatus } from './admin.js';
+import { getAllAdmins } from './admin.js';
+import { updateAdminRole } from './admin.js';
 
 dotenv.config();
 
@@ -82,7 +87,12 @@ app.get("/provider/pending-requests", getPendingRequests);
 app.get("/provider/active-requests", getActiveRequestsSP);
 app.get("/provider/past-requests", getPastRequestsSP);
 
-//Adming endpoints
+// Admin endpoints
 app.get("/admin/customers", getAllCustomers);
 app.get("/admin/service-providers", getAllServiceProviders);
 app.get("/admin/services", getAllServices);
+app.get("/admin/admins", getAllAdmins);
+app.post("/admin/providers/:providerId/approve", approveProvider);
+app.post("/admin/providers/:providerId/reject", rejectProvider);
+app.patch("/admin/providers/:providerId/status", updateProviderStatus);
+app.patch("/admin/admins/:adminId/role", updateAdminRole);

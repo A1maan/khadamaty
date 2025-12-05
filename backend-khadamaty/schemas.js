@@ -77,6 +77,7 @@ const adminSchema = new mongoose.Schema({
     name: mongoose.Schema.Types.String,
     email: mongoose.Schema.Types.String,
     password: mongoose.Schema.Types.String,
+    role: { type: mongoose.Schema.Types.String, default: "Moderator" },
     createdAt: { type: mongoose.Schema.Types.Date, default: Date.now },
     updatedAt: { type: mongoose.Schema.Types.Date, default: Date.now },
 });

@@ -1,30 +1,52 @@
 /* this screen is for promoting or demoting admin teammates */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { useMockData } from '../../context/MockDataContext'
+import { fetchAllAdmins, updateAdminRole } from '../../api/admin'
 import './Admin.css'
 
 const AdminUsersAdmins = () => {
-  /* load current admins + function to change roles */
-  const { adminData, updateAdminRole } = useMockData()
-
-  /* tracks which admin is being edited */
+  const [admins, setAdmins] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [editingAdmin, setEditingAdmin] = useState(null)
-
-  /* the role currently selected in the editor panel */
   const [roleSelection, setRoleSelection] = useState('Moderator')
+
+  useEffect(() => {
+    const loadAdmins = async () => {
+      try {
+        setLoading(true)
+        const response = await fetchAllAdmins()
+        setAdmins(response?.data || [])
+        setError(null)
+      } catch (err) {
+        setError(err.message || 'Failed to load admins')
+        setAdmins([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadAdmins()
+  }, [])
 
   /* open editing panel with selected data */
   const openEditor = (admin) => {
     setEditingAdmin(admin)
-    setRoleSelection(admin.role)
+    setRoleSelection(admin.role || 'Moderator')
   }
 
   /* apply role update and close drawer */
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editingAdmin) return
-    updateAdminRole(editingAdmin.id, roleSelection)
-    setEditingAdmin(null)
+    try {
+      await updateAdminRole(editingAdmin._id || editingAdmin.id, roleSelection)
+      // Refresh admins list
+      const response = await fetchAllAdmins()
+      setAdmins(response?.data || [])
+      setEditingAdmin(null)
+      alert('Admin role updated successfully')
+    } catch (err) {
+      alert('Failed to update admin role: ' + (err.message || 'Unknown error'))
+    }
   }
 
   return (
@@ -34,20 +56,26 @@ const AdminUsersAdmins = () => {
       <main className="admin-content">
         <section className="users-section">
           <h2>Admin Team</h2>
+          {loading && <div className="content-placeholder">Loading admins...</div>}
+          {error && <div className="content-placeholder error">{error}</div>}
 
           {/* list of all admin accounts */}
           <div className="users-grid">
-            {adminData.adminUsers.map((admin) => (
-              <article key={admin.id} className="user-card">
+            {!loading && !error && admins.length === 0 && (
+              <div className="content-placeholder">No admins found.</div>
+            )}
+            {admins.map((admin) => (
+              <article key={admin._id || admin.id} className="user-card">
                 <ion-icon name="person-circle-outline"></ion-icon>
 
                 <div className="user-info">
-                  <h4>{admin.name}</h4>
-                  <p>{admin.role}</p>
+                  <h4>{admin.name || 'Unnamed Admin'}</h4>
+                  <p>{admin.email || 'No email'}</p>
+                  <p>Role: {admin.role || 'Moderator'}</p>
 
                   {/* extra metadata */}
                   <span className="status-badge activated">
-                    Last Login: {admin.lastLogin}
+                    Created: {admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : 'N/A'}
                   </span>
 
                   {/* open editor panel for this admin */}
@@ -68,7 +96,8 @@ const AdminUsersAdmins = () => {
         {editingAdmin && (
           <section className="users-section detail-panel">
             <h2>Update Role</h2>
-            <p>{editingAdmin.name}</p>
+            <p>{editingAdmin.name || 'Unnamed Admin'}</p>
+            <p>Email: {editingAdmin.email || 'N/A'}</p>
             <label>
               Role
               {/* select new role for the admin */}
