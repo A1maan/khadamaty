@@ -49,8 +49,8 @@ const requestSchema = new mongoose.Schema({
     customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
     status: {
         type: String,
-        enum: ["active", "in progress", "cancelled", "completed"],
-        default: "active"
+        enum: ["pending", "active", "in progress", "cancelled", "completed"],
+        default: "pending"
     },
     datetime: { type: mongoose.Schema.Types.Date },
     notes: mongoose.Schema.Types.String,

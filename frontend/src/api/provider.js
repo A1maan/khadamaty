@@ -43,3 +43,9 @@ export const fetchPendingRequests = (providerId, options = {}) =>
     method: 'GET',
     ...options,
   });
+
+export const updateProviderRequestStatus = (requestId, status) =>
+  apiRequest(`/provider/requests/${encode(requestId)}`, {
+    method: 'PATCH',
+    body: { status },
+  });

@@ -1,7 +1,7 @@
 /* Provider queue — view pending requests and accept or decline them */
 import { useMemo, useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { fetchPendingRequests } from '../../api/provider'
+import { fetchPendingRequests, updateProviderRequestStatus } from '../../api/provider'
 import './Provider.css'
 
 const PendingRequests = () => {
@@ -15,23 +15,24 @@ const PendingRequests = () => {
   const [declineNotes, setDeclineNotes] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
 
-  useEffect(() => {
-    const loadRequests = async () => {
-      try {
-        const providerId = localStorage.getItem('providerId')
-        if (!providerId) {
-          setError('Provider ID not found')
-          setLoading(false)
-          return
-        }
-        const data = await fetchPendingRequests(providerId)
-        setRequests(data.requests || [])
-      } catch (err) {
-        setError(err.message || 'Failed to load requests')
-      } finally {
+  const loadRequests = async () => {
+    try {
+      const providerId = localStorage.getItem('providerId')
+      if (!providerId) {
+        setError('Provider ID not found')
         setLoading(false)
+        return
       }
+      const data = await fetchPendingRequests(providerId)
+      setRequests(data.requests || [])
+    } catch (err) {
+      setError(err.message || 'Failed to load requests')
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
     loadRequests()
   }, [])
 
@@ -58,16 +59,26 @@ const PendingRequests = () => {
   }
 
   // Confirm decline, send data back to context, then close
-  const handleSubmitDecline = () => {
+  const handleSubmitDecline = async () => {
     if (!selectedRequest) return
-    // TODO: Implement decline API call
-    console.log('Declining request', selectedRequest.id, declineReason, declineNotes)
-    closeModal()
+    try {
+      await updateProviderRequestStatus(selectedRequest._id, 'cancelled')
+      await loadRequests() // Refresh list
+      closeModal()
+    } catch (err) {
+      console.error('Failed to decline request:', err)
+      alert('Failed to decline request')
+    }
   }
 
-  const handleAccept = (requestId) => {
-    // TODO: Implement accept API call
-    console.log('Accepting request', requestId)
+  const handleAccept = async (requestId) => {
+    try {
+      await updateProviderRequestStatus(requestId, 'active')
+      await loadRequests() // Refresh list
+    } catch (err) {
+      console.error('Failed to accept request:', err)
+      alert('Failed to accept request')
+    }
   }
 
   // Reasons shown as selectable chips

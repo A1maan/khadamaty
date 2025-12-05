@@ -184,7 +184,7 @@ export const getPendingRequests = async (req, res) => {
         for (const service of services) {
             const found = await Request.find({
                 serviceId: service._id,
-                status: "active",
+                status: "pending",
             });
             requests.push(...found); // spread so it's a flat array
         }
