@@ -1,5 +1,7 @@
 import { apiRequest } from './client';
 
+const encode = (value) => encodeURIComponent(value ?? '');
+
 export const signupProvider = (payload) =>
   apiRequest('/provider/signup', {
     method: 'POST',
@@ -18,3 +20,14 @@ export const signinProvider = (payload) =>
     body: payload,
   });
 
+export const fetchProviderServices = (providerId, options = {}) =>
+  apiRequest(`/provider/services?providerId=${encode(providerId)}`, {
+    method: 'GET',
+    ...options,
+  });
+
+export const createProviderService = (providerId, payload) =>
+  apiRequest(`/provider/services?providerId=${encode(providerId)}`, {
+    method: 'POST',
+    body: payload,
+  });

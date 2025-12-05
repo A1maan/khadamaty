@@ -1,30 +1,83 @@
-/* Provider control center for editing, duplicating, pausing, or removing services */
-import { useMemo, useState } from 'react'
+/* Provider control center for managing live services */
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { useMockData } from '../../context/MockDataContext'
+import { fetchProviderServices } from '../../api/provider'
 import './Provider.css'
+
+const formatPrice = (price, priceType) => {
+  if (price == null || price === '') return 'Pricing to be shared'
+  const numeric = Number(price)
+  const formatted = Number.isNaN(numeric) ? price : `SAR ${numeric.toLocaleString()}`
+  return priceType ? `${formatted} / ${priceType}` : formatted
+}
+
+const formatDate = (value) => {
+  if (!value) return 'Just now'
+  try {
+    return new Date(value).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    })
+  } catch (error) {
+    return 'Just now'
+  }
+}
 
 const ProviderServices = () => {
   const navigate = useNavigate()
-  
-  // Pull service list + management actions from context
-  const { providerData, duplicateProviderService, toggleProviderServiceStatus, removeProviderService } = useMockData()
-
   // Local search field
   const [searchTerm, setSearchTerm] = useState('')
+  const [services, setServices] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const providerId = typeof window !== 'undefined' ? window.localStorage.getItem('providerId') : null
+
+  useEffect(() => {
+    if (!providerId) {
+      setError('Please sign in as a provider to manage services.')
+      setIsLoading(false)
+      return
+    }
+    const controller = new AbortController()
+    setIsLoading(true)
+    fetchProviderServices(providerId, { signal: controller.signal })
+      .then((data) => {
+        const normalized = (data?.services ?? []).map((service) => ({
+          id: (service._id ?? service.id ?? '').toString(),
+          name: service.name ?? 'Service',
+          description: service.description ?? 'Description coming soon.',
+          status: service.status ?? 'Active',
+          price: service.price,
+          priceType: service.priceType,
+          updatedAt: service.updatedAt ?? service.createdAt,
+        }))
+        setServices(normalized)
+        setError(null)
+      })
+      .catch((err) => {
+        if (err.name === 'AbortError') return
+        setServices([])
+        setError(err.message ?? 'Failed to load services.')
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+
+    return () => controller.abort()
+  }, [providerId])
 
   // Filter by name or description (case-insensitive)
   const filteredServices = useMemo(
     () =>
-      providerData.services.filter((service) => {
+      services.filter((service) => {
         if (!searchTerm.trim()) return true
         const normalized = searchTerm.trim().toLowerCase()
         return [service.name, service.description].some((field) =>
           field.toLowerCase().includes(normalized)
         )
       }),
-    [searchTerm, providerData.services]
+    [searchTerm, services]
   )
 
   return (
@@ -59,9 +112,12 @@ const ProviderServices = () => {
           </div>
         </div>
 
+        {isLoading && <div className="content-placeholder">Loading services...</div>}
+        {error && <div className="error-state">{error}</div>}
+
         <section className="provider-cards">
           {/* Empty search result */}
-          {filteredServices.length === 0 && (
+          {!isLoading && !error && filteredServices.length === 0 && (
             <div className="content-placeholder">No services match your search.</div>
           )}
 
@@ -70,7 +126,7 @@ const ProviderServices = () => {
             <article key={service.id} className="service-card provider-card">
               <div className="service-head">
                 <div className="service-icon">
-                  <ion-icon name={service.icon}></ion-icon>
+                  <ion-icon name="construct-outline"></ion-icon>
                 </div>
 
                 <div className="service-body">
@@ -78,14 +134,14 @@ const ProviderServices = () => {
                   <p className="service-description" title={service.description}>{service.description}</p>
                 </div>
 
-                <span className={`status-pill ${service.status.toLowerCase()}`}>
-                  {service.status}
+                <span className={`status-pill ${service.status?.toLowerCase() ?? 'active'}`}>
+                  {service.status ?? 'Active'}
                 </span>
               </div>
 
               <div className="service-meta">
-                <span className="meta-item" title={service.pricing}>{service.pricing}</span>
-                <span className="meta-item">Updated {service.updated}</span>
+                <span className="meta-item">{formatPrice(service.price, service.priceType)}</span>
+                <span className="meta-item">Updated {formatDate(service.updatedAt)}</span>
               </div>
 
               <div className="service-actions">
@@ -97,32 +153,17 @@ const ProviderServices = () => {
                 >
                   EDIT
                 </button>
-
                 {/* Make a copy */}
-                <button type="button" className="btn-ghost" onClick={() => duplicateProviderService(service.id)}>
-                  DUPLICATE
+                <button type="button" className="btn-ghost" disabled>
+                  Duplicate (coming soon)
                 </button>
-
-                {/* Pause or resume */}
-                <button
-                  type="button"
-                  className="btn-ghost"
-                  onClick={() => toggleProviderServiceStatus(service.id)}
-                >
-                  {service.status === 'Paused' ? 'RESUME' : 'PAUSE'}
+                {/* Pause/Resume */}
+                <button type="button" className="btn-ghost" disabled>
+                  Pause/Resume (coming soon)
                 </button>
-
-                {/* Remove with confirmation */}
-                <button
-                  type="button"
-                  className="btn-danger"
-                  onClick={() => {
-                    if (window.confirm('remove this service from your catalog?')) {
-                      removeProviderService(service.id)
-                    }
-                  }}
-                >
-                  DELETE
+                {/* Remove button*/}
+                <button type="button" className="btn-danger" disabled>
+                  Delete (coming soon)
                 </button>
               </div>
             </article>

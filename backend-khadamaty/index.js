@@ -71,6 +71,3 @@ app.put("/provider/services/:serviceId", updateProviderService);
 app.delete("/provider/services/:serviceId", deleteProviderService);
 app.get("/provider/requests", getProviderRequests);
 app.patch("/provider/requests/:requestId", updateProviderRequestStatus);
-
-
-
