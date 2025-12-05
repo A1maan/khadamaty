@@ -3,11 +3,14 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { handleSignup } from './customer.js';
+import { handleSigniIn } from './customer.js';
 import { verifyOtp } from './customer.js';
 import { getServices } from './customer.js';
 import { requestService } from './customer.js';
 import { getActiveRequests } from './customer.js';
 import { getPastRequests } from './customer.js';
+import { saveService } from './customer.js';
+import { getSavedServices } from './customer.js';
 import { unsaveService } from './customer.js';
 import { handleSigniIn } from './customer.js';
 
@@ -55,6 +58,8 @@ app.get("/customer/services", getServices);
 app.post("/customer/book", requestService);
 app.get("/customer/active-requests", getActiveRequests);
 app.get("/customer/past-requests", getPastRequests);
+app.post("/customer/save-service", saveService);
+app.get("/customer/saved-services", getSavedServices);
 app.delete("/customer/unsave-service", unsaveService);
 
 // Provider endpoints
@@ -67,9 +72,3 @@ app.put("/provider/services/:serviceId", updateProviderService);
 app.delete("/provider/services/:serviceId", deleteProviderService);
 app.get("/provider/requests", getProviderRequests);
 app.patch("/provider/requests/:requestId", updateProviderRequestStatus);
-
-
-
-
-
-

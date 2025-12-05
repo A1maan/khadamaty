@@ -3,11 +3,17 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import { verifyCustomerOtp } from '../../api/customer'
+import { verifyProviderOtp } from '../../api/provider'
 import './Auth.css'
 
 const OTPVerification = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const initialActor =
+    location.state?.actor ??
+    location.state?.role ??
+    (typeof window !== 'undefined' ? window.localStorage.getItem('pendingSignupType') ?? 'customer' : 'customer')
+  const [actor] = useState(initialActor)
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [errorMessage, setErrorMessage] = useState(null)
   const [isVerifying, setIsVerifying] = useState(false)
@@ -31,15 +37,18 @@ const OTPVerification = () => {
     }
   }
 
-  const readPendingCustomerId = () => {
+  const readPendingId = () => {
     if (typeof window === 'undefined') return null
+    if (actor === 'provider') {
+      return window.localStorage.getItem('pendingProviderId') ?? window.localStorage.getItem('providerId')
+    }
     return window.localStorage.getItem('pendingCustomerId') ?? window.localStorage.getItem('customerId')
   }
 
   // if user is verified, navigate to the dashboard after confirming OTP with backend
   const handleVerify = async () => {
-    const customerId = readPendingCustomerId()
-    if (!customerId) {
+    const pendingId = readPendingId()
+    if (!pendingId) {
       setErrorMessage('We could not find a pending signup. Please sign up again.')
       return
     }
@@ -53,12 +62,22 @@ const OTPVerification = () => {
     try {
       setIsVerifying(true)
       setErrorMessage(null)
-      await verifyCustomerOtp({ id: customerId, otp: Number(code) })
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem('customerId', customerId)
-        window.localStorage.removeItem('pendingCustomerId')
+      if (actor === 'provider') {
+        await verifyProviderOtp({ id: pendingId, otp: Number(code) })
+      } else {
+        await verifyCustomerOtp({ id: pendingId, otp: Number(code) })
       }
-      navigate('/customer/dashboard')
+      if (typeof window !== 'undefined') {
+        if (actor === 'provider') {
+          window.localStorage.setItem('providerId', pendingId)
+          window.localStorage.removeItem('pendingProviderId')
+        } else {
+          window.localStorage.setItem('customerId', pendingId)
+          window.localStorage.removeItem('pendingCustomerId')
+        }
+        window.localStorage.removeItem('pendingSignupType')
+      }
+      navigate(actor === 'provider' ? '/provider/services' : '/customer/dashboard')
     } catch (error) {
       setErrorMessage(error.message ?? 'Verification failed. Please try again.')
     } finally {

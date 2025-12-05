@@ -1,23 +1,25 @@
 /* Create or edit a provider service with live preview in the sidebar */
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import { serviceCategories } from '../../data/customerData'
-import { useMockData } from '../../context/MockDataContext'
+import { createProviderService } from '../../api/provider'
 import './Provider.css'
 
 // Default shape for a new service
 const blankService = {
   name: '',
   category: serviceCategories[0]?.id ?? 'plumbing',
-  pricing: '',
   status: 'Draft',
+  icon: 'construct-outline',
+  description: '',
+  price: '',
+  priceType: 'Per visit',
   coverage: '',
   availability: '',
   responseTime: '',
-  description: '',
   addOns: '',
-  icon: 'construct-outline',
+  image: '',
 }
 
 // Icons the provider can pick from
@@ -30,33 +32,29 @@ const iconOptions = [
   'color-palette-outline',
 ]
 
+// Show the price preview in a friendly format
+const formatPrice = (price, priceType) => {
+  if (price === '' || price === null || price === undefined) return 'Pricing TBD'
+  const numeric = Number(price)
+  const formatted = Number.isNaN(numeric) ? price : `SAR ${numeric.toLocaleString()}`
+  return priceType ? `${formatted} / ${priceType}` : formatted
+}
+
 const ProviderServiceForm = ({ mode = 'create' }) => {
   const navigate = useNavigate()
   const { serviceId } = useParams()
-  const { providerData, upsertProviderService } = useMockData()
-
-  // Are we editing an existing service or creating a new one?
+  const providerId = typeof window !== 'undefined' ? window.localStorage.getItem('providerId') : null
   const isEdit = mode === 'edit'
 
-  // Look up the existing service by ID when in edit mode
-  const existingService = useMemo(
-    () => providerData.services.find((service) => service.id === serviceId),
-    [providerData.services, serviceId]
-  )
-
-  // If editing but no matching service was found, show a simple error screen
-  if (isEdit && !existingService) {
+  // Editing existing entries isn't wired up yet, so show a simple notice
+  if (isEdit) {
     return (
       <div className="provider-page">
         <Sidebar userType="provider" />
         <main className="provider-content">
           <div className="content-placeholder">
-            The service you are looking for does not exist.
-            <button
-              type="button"
-              className="btn-primary-outline"
-              onClick={() => navigate('/provider/services')}
-            >
+            Editing services is coming soon. For now, create new listings from this screen.
+            <button type="button" className="btn-primary-outline" onClick={() => navigate('/provider/services')}>
               Back to services
             </button>
           </div>
@@ -65,18 +63,9 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
     )
   }
 
-  // Form state: either prefill with existing service or start from blank
-  const [formData, setFormData] = useState(
-    isEdit && existingService
-      ? {
-          ...existingService,
-          addOns: existingService.addOns ?? '',
-        }
-      : blankService
-  )
-
-  // Simple saving/loading state for the submit button
+  const [formData, setFormData] = useState(blankService)
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
 
   // Generic change handler for inputs + selects + textareas
   const handleChange = (event) => {
@@ -87,21 +76,31 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
     }))
   }
 
-  // Save or update the service, then navigate back to the services list
-  const handleSubmit = (event) => {
+  // Save a new service via the backend, then return to the list
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    setIsSaving(true)
-    upsertProviderService(isEdit ? existingService.id : null, formData)
-    setTimeout(() => {
-      setIsSaving(false)
+    if (!providerId) {
+      setError('Please sign in as a provider before creating services.')
+      return
+    }
+    try {
+      setIsSaving(true)
+      setError('')
+      await createProviderService(providerId, {
+        name: formData.name,
+        category: formData.category,
+        description: formData.description,
+        price: formData.price === '' ? undefined : Number(formData.price),
+        priceType: formData.priceType,
+        image: formData.image,
+      })
       navigate('/provider/services', { replace: true })
-    }, 300)
+    } catch (err) {
+      setError(err.message ?? 'Unable to save this service right now.')
+    } finally {
+      setIsSaving(false)
+    }
   }
-
-  // Copy under the title changes depending on create vs edit
-  const headerCopy = isEdit
-    ? 'Update copy, pricing, and availability for this listing.'
-    : 'Describe your service so customers understand what you offer.'
 
   return (
     <div className="provider-page">
@@ -111,14 +110,10 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
         <div className="provider-header">
           <div>
             <p className="eyebrow">Services</p>
-            <h2>{isEdit ? 'Edit Service' : 'Create Service'}</h2>
-            <p>{headerCopy}</p>
+            <h2>Create Service</h2>
+            <p>Describe your service so customers understand what you offer.</p>
           </div>
-          <button
-            type="button"
-            className="btn-ghost"
-            onClick={() => navigate('/provider/services')}
-          >
+          <button type="button" className="btn-ghost" onClick={() => navigate('/provider/services')}>
             Back to list
           </button>
         </div>
@@ -126,6 +121,7 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
         <div className="provider-form">
           {/* Main form on the left */}
           <form className="service-form" onSubmit={handleSubmit}>
+            {error && <div className="error-message">{error}</div>}
             <div className="form-grid">
               <label>
                 Service Name
@@ -185,13 +181,27 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
 
             <div className="form-grid">
               <label>
-                Pricing Summary
+                Price (SAR)
+                <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  min="0"
+                  step="1"
+                  onChange={handleChange}
+                  placeholder="200"
+                  required
+                />
+              </label>
+
+              <label>
+                Price Type
                 <input
                   type="text"
-                  name="pricing"
-                  value={formData.pricing}
+                  name="priceType"
+                  value={formData.priceType}
                   onChange={handleChange}
-                  placeholder="Starts at SAR 200"
+                  placeholder="Per hour"
                   required
                 />
               </label>
@@ -228,6 +238,17 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
                   placeholder="2 hrs average"
                 />
               </label>
+
+              <label>
+                Image URL
+                <input
+                  type="url"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleChange}
+                  placeholder="https://example.com/service.jpg"
+                />
+              </label>
             </div>
 
             <label>
@@ -242,15 +263,11 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
             </label>
 
             <div className="form-actions">
-              <button
-                type="button"
-                className="btn-ghost"
-                onClick={() => navigate('/provider/services')}
-              >
+              <button type="button" className="btn-ghost" onClick={() => navigate('/provider/services')}>
                 Cancel
               </button>
               <button type="submit" className="btn-primary-solid" disabled={isSaving}>
-                {isSaving ? 'Saving…' : isEdit ? 'Save Changes' : 'Publish Service'}
+                {isSaving ? 'Saving…' : 'Publish Service'}
               </button>
             </div>
           </form>
@@ -270,12 +287,10 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
                       'Preview your description here to see how customers will read it.'}
                   </p>
                 </div>
-                <span className={`status-pill ${formData.status.toLowerCase()}`}>
-                  {formData.status}
-                </span>
+                <span className={`status-pill ${formData.status.toLowerCase()}`}>{formData.status}</span>
               </div>
               <div className="service-meta">
-                <span>{formData.pricing || 'Pricing TBD'}</span>
+                <span>{formatPrice(formData.price, formData.priceType)}</span>
                 <span>{formData.coverage || 'Coverage TBD'}</span>
                 <span>{formData.availability || 'Availability TBD'}</span>
               </div>

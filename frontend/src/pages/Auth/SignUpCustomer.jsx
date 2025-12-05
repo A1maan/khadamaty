@@ -37,6 +37,7 @@ const SignUpCustomer = () => {
       // save the pending customer id so the otp page knows who to verify
       if (response?.customerId) {
         localStorage.setItem('pendingCustomerId', response.customerId)
+        localStorage.setItem('pendingSignupType', 'customer')
       }
       // send them to verify their email after signup
       navigate('/signup/verify', { state: { email: formData.email } })

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
+import { signupProvider } from '../../api/provider'
 import './Auth.css'
 
 // provider signup form - collects business name, email, phone, and password
@@ -14,9 +15,11 @@ const SignUpProvider = () => {
     businessName: statePrefill.businessName ?? '',
     email: statePrefill.email ?? '',
     mobile: statePrefill.mobile ?? '',
+    nationalID: statePrefill.nationalID ?? '',
     password: statePrefill.password ?? '',
     confirmPassword: statePrefill.confirmPassword ?? '',
   })
+  const [error, setError] = useState('')
 
   const handleChange = (e) => {
     // update form state as they type
@@ -26,16 +29,30 @@ const SignUpProvider = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // check for password mismatch before moving forward
-    // if they don't match, send them to the provider error page with their business name preserved
+    setError('')
     if (formData.password !== formData.confirmPassword) {
       navigate('/signup/provider/error', { state: { businessName: formData.businessName } })
       return
     }
-    // passwords match, move to verification
-    navigate('/signup/verify')
+    try {
+      const payload = {
+        name: formData.businessName,
+        email: formData.email,
+        phone: formData.mobile,
+        password: formData.password,
+        nationalID: formData.nationalID,
+      }
+      const response = await signupProvider(payload)
+      if (response?.providerId) {
+        localStorage.setItem('pendingProviderId', response.providerId)
+        localStorage.setItem('pendingSignupType', 'provider')
+      }
+      navigate('/signup/verify', { state: { email: formData.email, actor: 'provider' } })
+    } catch (err) {
+      setError(err.message ?? 'Signup failed. Please try again.')
+    }
   }
 
   return (
@@ -52,6 +69,8 @@ const SignUpProvider = () => {
               Showcase your services, manage bookings, and grow your reputation with Khadamaty.
             </p>
             
+            {error && <div className="error-message">{error}</div>}
+
             <form className="auth-form" onSubmit={handleSubmit}>
               {/* business name field - unique to provider signup */}
               <div className="form-group">
@@ -94,6 +113,18 @@ const SignUpProvider = () => {
                     required
                   />
                 </div>
+              </div>
+
+              <div className="form-group">
+                <label>National ID</label>
+                <input
+                  type="text"
+                  name="nationalID"
+                  placeholder="1XXXXXXXXX"
+                  value={formData.nationalID}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               {/* password field */}

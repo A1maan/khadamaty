@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import { signinCustomer } from '../../api/customer'
+import { signinProvider } from '../../api/provider'
 import './Auth.css'
 
 // this is just a global object to hold the user roles with their specific descriptions and configurations
@@ -58,14 +59,20 @@ const SignIn = ({ role = 'customer' }) => {
     e.preventDefault()
     setError('')
     try {
-      // Only call customer signin for now as provider/admin APIs might differ
       if (role === 'customer') {
         await signinCustomer({
           email: formData.email,
           password: formData.password
         })
+      } else if (role === 'provider') {
+        const response = await signinProvider({
+          email: formData.email,
+          password: formData.password
+        })
+        if (response?.providerId) {
+          localStorage.setItem('providerId', response.providerId)
+        }
       }
-      // For other roles or after success, navigate
       navigate(config.redirect)
     } catch (err) {
       setError(err.message || 'Sign in failed')
