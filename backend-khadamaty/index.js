@@ -9,6 +9,7 @@ import { requestService } from './customer.js';
 import { getActiveRequests } from './customer.js';
 import { getPastRequests } from './customer.js';
 import { unsaveService } from './customer.js';
+import { handleSigniIn } from './customer.js';
 
 import { handleProviderSignup } from './provider.js';
 import { verifyProviderOtp } from './provider.js';

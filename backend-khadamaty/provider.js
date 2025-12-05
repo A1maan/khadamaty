@@ -17,6 +17,7 @@ function generateOTP() {
 }
 
 async function sendOTP(otp, email) {
+    console.log("Sending OTP to", otp, email);
     try {
         const mailOptions = {
             from: `"Khadamaty" <${process.env.EMAIL_USER}>`,
