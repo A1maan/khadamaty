@@ -49,3 +49,15 @@ export const updateProviderRequestStatus = (requestId, status) =>
     method: 'PATCH',
     body: { status },
   });
+
+export const fetchProviderActiveRequests = (providerId, options = {}) =>
+  apiRequest(`/provider/active-requests?providerId=${encode(providerId)}`, {
+    method: 'GET',
+    ...options,
+  });
+
+export const fetchProviderPastRequests = (providerId, options = {}) =>
+  apiRequest(`/provider/past-requests?providerId=${encode(providerId)}`, {
+    method: 'GET',
+    ...options,
+  });

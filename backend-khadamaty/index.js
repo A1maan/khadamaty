@@ -23,6 +23,8 @@ import { deleteProviderService } from './provider.js';
 import { getProviderRequests } from './provider.js';
 import { updateProviderRequestStatus } from './provider.js';
 import { getPendingRequests } from './provider.js';
+import { getActiveRequestsSP } from './provider.js';
+import { getPastRequestsSP } from './provider.js';
 
 import { getAllCustomers } from './admin.js';
 import { getAllServiceProviders } from './admin.js';
@@ -77,6 +79,8 @@ app.delete("/provider/services/:serviceId", deleteProviderService);
 app.get("/provider/requests", getProviderRequests);
 app.patch("/provider/requests/:requestId", updateProviderRequestStatus);
 app.get("/provider/pending-requests", getPendingRequests);
+app.get("/provider/active-requests", getActiveRequestsSP);
+app.get("/provider/past-requests", getPastRequestsSP);
 
 //Adming endpoints
 app.get("/admin/customers", getAllCustomers);

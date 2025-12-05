@@ -197,6 +197,61 @@ export const getPendingRequests = async (req, res) => {
     }
 };
 
+export const getActiveRequestsSP = async (req, res) => {
+    try {
+        const { providerId } = req.query;
+        if (!providerId) {
+            return res.status(400).json({ message: "providerId required" });
+        }
+
+        const services = await Service.find({ providerId }, { _id: 1 });
+        const requests = [];
+
+        for (const service of services) {
+            const found = await Request.find({
+                serviceId: service._id,
+                status: { $in: ["active", "in progress"] },
+            });
+            requests.push(...found); // spread so it's a flat array
+        }
+
+        console.log(requests);
+        res.status(200).json({ requests });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching pending requests" });
+    }
+};
+
+export const getPastRequestsSP = async (req, res) => {
+    try {
+        const { providerId } = req.query;
+        if (!providerId) {
+            return res.status(400).json({ message: "providerId required" });
+        }
+
+        const services = await Service.find({ providerId }, { _id: 1 });
+        const requests = [];
+
+        for (const service of services) {
+            const found = await Request.find({
+                serviceId: service._id,
+                status: { $in: ["cancelled", "completed"] },
+            });
+            requests.push(...found); // spread so it's a flat array
+        }
+
+        console.log(requests);
+        res.status(200).json({ requests });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching pending requests" });
+    }
+};
+
+
+
+
 export async function updateProviderRequestStatus(req, res) {
     try {
         const { requestId } = req.params;
