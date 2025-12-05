@@ -23,7 +23,24 @@ async function sendOTP(otp, email) {
             from: `"Khadamaty" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: "Your OTP from Khadamaty (Provider)",
-            html: `<p>Your OTP: <strong>${otp}</strong><br>This code will expire in 1 minute.</p>`
+            html: ` <div style="font-family: sans-serif; background-color: #f7f8fc; padding: 40px; text-align: center;">
+                <div style="max-width: 500px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 24px; box-shadow: 0 20px 60px rgba(15, 27, 64, 0.08);">
+                    <h1 style="color: #2a4dd0; margin-bottom: 24px; font-family: sans-serif;">Khadamaty</h1>
+                    <p style="color: #4b5563; font-size: 16px; margin-bottom: 32px; line-height: 1.5;">
+                        Use the following One-Time Password (OTP) to complete your verification.<br>
+                        This code will expire in 1 minute.
+                    </p>
+                    <div style="background-color: #eef2ff; padding: 20px; border-radius: 12px; display: inline-block; margin-bottom: 32px;">
+                        <span style="font-size: 32px; font-weight: bold; color: #2a4dd0; letter-spacing: 4px;">${otp}</span>
+                    </div>
+                    <p style="color: #6b7280; font-size: 14px; margin-top: 24px;">
+                        If you didn't request this code, please ignore this email.
+                    </p>
+                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e4e8f3;">
+                        <p style="color: #9ca3af; font-size: 12px;">&copy; ${new Date().getFullYear()} Khadamaty. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>`
         };
         await transporter.sendMail(mailOptions);
         return true;
@@ -153,6 +170,32 @@ export async function getProviderRequests(req, res) {
         res.status(500).json({ message: "Error fetching provider requests" });
     }
 }
+
+export const getPendingRequests = async (req, res) => {
+    try {
+        const { providerId } = req.query;
+        if (!providerId) {
+            return res.status(400).json({ message: "providerId required" });
+        }
+
+        const services = await Service.find({ providerId }, { _id: 1 });
+        const requests = [];
+
+        for (const service of services) {
+            const found = await Request.find({
+                serviceId: service._id,
+                status: "active",
+            });
+            requests.push(...found); // spread so it's a flat array
+        }
+
+        console.log(requests);
+        res.status(200).json({ requests });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching pending requests" });
+    }
+};
 
 export async function updateProviderRequestStatus(req, res) {
     try {

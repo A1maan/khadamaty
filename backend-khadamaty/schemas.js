@@ -70,3 +70,15 @@ const savedServicesSchema = new mongoose.Schema({
 });
 
 export const SavedService = mongoose.model("SavedService", savedServicesSchema);
+
+
+
+const adminSchema = new mongoose.Schema({
+    name: mongoose.Schema.Types.String,
+    email: mongoose.Schema.Types.String,
+    password: mongoose.Schema.Types.String,
+    createdAt: { type: mongoose.Schema.Types.Date, default: Date.now },
+    updatedAt: { type: mongoose.Schema.Types.Date, default: Date.now },
+});
+
+export const Admin = mongoose.model("Admin", adminSchema);

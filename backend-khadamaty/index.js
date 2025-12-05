@@ -12,7 +12,6 @@ import { getPastRequests } from './customer.js';
 import { saveService } from './customer.js';
 import { getSavedServices } from './customer.js';
 import { unsaveService } from './customer.js';
-import { handleSigniIn } from './customer.js';
 
 import { handleProviderSignup } from './provider.js';
 import { verifyProviderOtp } from './provider.js';
@@ -23,6 +22,11 @@ import { updateProviderService } from './provider.js';
 import { deleteProviderService } from './provider.js';
 import { getProviderRequests } from './provider.js';
 import { updateProviderRequestStatus } from './provider.js';
+import { getPendingRequests } from './provider.js';
+
+import { getAllCustomers } from './admin.js';
+import { getAllServiceProviders } from './admin.js';
+import { getAllServices } from './admin.js';
 
 dotenv.config();
 
@@ -72,3 +76,9 @@ app.put("/provider/services/:serviceId", updateProviderService);
 app.delete("/provider/services/:serviceId", deleteProviderService);
 app.get("/provider/requests", getProviderRequests);
 app.patch("/provider/requests/:requestId", updateProviderRequestStatus);
+app.get("/provider/pending-requests", getPendingRequests);
+
+//Adming endpoints
+app.get("/admin/customers", getAllCustomers);
+app.get("/admin/service-providers", getAllServiceProviders);
+app.get("/admin/services", getAllServices);

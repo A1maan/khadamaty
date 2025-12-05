@@ -31,3 +31,15 @@ export const createProviderService = (providerId, payload) =>
     method: 'POST',
     body: payload,
   });
+
+export const updateProviderService = (providerId, serviceId, payload) =>
+  apiRequest(`/provider/services?providerId=${encode(providerId)}&serviceId=${encode(serviceId)}`, {
+    method: 'PUT',
+    body: payload,
+  });
+
+export const fetchPendingRequests = (providerId, options = {}) =>
+  apiRequest(`/provider/pending-requests?providerId=${encode(providerId)}`, {
+    method: 'GET',
+    ...options,
+  });
