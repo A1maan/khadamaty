@@ -25,6 +25,7 @@ const serviceProviderSchema = new mongoose.Schema({
     isVerified: { type: mongoose.Schema.Types.Boolean, required: false },
     isFeatured: { type: mongoose.Schema.Types.Boolean, required: false },
     isApproved: { type: mongoose.Schema.Types.Boolean, required: false, default: false },
+    isRejected: { type: mongoose.Schema.Types.Boolean, required: false, default: false },
     createdAt: { type: mongoose.Schema.Types.Date, default: Date.now },
     updatedAt: { type: mongoose.Schema.Types.Date, default: Date.now },
 });

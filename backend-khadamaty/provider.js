@@ -108,6 +108,13 @@ export async function handleProviderSignin(req, res) {
             });
         }
 
+        if (provider.isRejected) {
+            return res.status(403).json({
+                message: "Provider rejected",
+                code: "NOT_REJECTED"
+            });
+        }
+
         res.status(200).json({ message: "Provider signed in successfully", providerId: provider._id, provider });
     } catch (err) {
         res.status(500).json({ message: "Error signing in provider" });
