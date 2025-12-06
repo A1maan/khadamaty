@@ -1,5 +1,5 @@
 // Prefer env override, otherwise hit the deployed backend
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://khadamaty-2av1.onrender.com';
+const API_BASE_URL = 'https://khadamaty-2av1.onrender.com';
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
