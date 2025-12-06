@@ -42,7 +42,8 @@ import { getPendingProviders } from './admin.js';
 
 dotenv.config();
 
-const port = 8000;
+// Prefer Render/host-provided port, fall back to local dev default
+const port = process.env.PORT || 8000;
 const app = express();
 app.use(morgan('dev'));
 
@@ -50,7 +51,7 @@ app.use(cors());
 app.use(express.json());
 
 app.listen(port, () => {
-    console.log(`Server running on port http://localhost:${port}`);
+    console.log(`Server running on http://localhost:${port}`);
 });
 
 app.get("/", (req, res) => {
