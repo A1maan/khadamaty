@@ -111,7 +111,7 @@ export async function handleProviderSignin(req, res) {
         if (provider.isRejected) {
             return res.status(403).json({
                 message: "Provider rejected",
-                code: "NOT_REJECTED"
+                code: "REJECTED"
             });
         }
 
