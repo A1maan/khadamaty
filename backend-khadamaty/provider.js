@@ -59,11 +59,17 @@ export async function handleProviderSignup(req, res) {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const otp = generateOTP();
-        const otpExpiry = new Date(Date.now() + 60 * 1000); // 1 minute expiry
+        const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minute expiry to allow for email delays
         const provider = new ServiceProvider({ name, email, password: hashedPassword, phone, nationalID, otp, otpExpiry, isVerified: false });
         await provider.save();
-        await sendOTP(otp, email);
+
+        // Respond immediately so the frontend can navigate, then attempt to send the email in the background
         res.status(201).json({ message: "Provider created. Check email for OTP.", providerId: provider._id });
+
+        // Fire-and-forget OTP email; log failures but don't block the client
+        sendOTP(otp, email).catch((err) => {
+            console.error("Error sending provider OTP email", err);
+        });
     } catch (err) {
         console.error("Provider signup error", err);
         res.status(500).json({ message: "Error signing up provider" });
