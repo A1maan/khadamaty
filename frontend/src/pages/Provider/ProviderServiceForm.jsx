@@ -46,26 +46,40 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
   const providerId = typeof window !== 'undefined' ? window.localStorage.getItem('providerId') : null
   const isEdit = mode === 'edit'
 
-  // Editing existing entries isn't wired up yet, so show a simple notice
-  if (isEdit) {
-    return (
-      <div className="provider-page">
-        <Sidebar userType="provider" />
-        <main className="provider-content">
-          <div className="content-placeholder">
-            Editing services is coming soon. For now, create new listings from this screen.
-            <button type="button" className="btn-primary-outline" onClick={() => navigate('/provider/services')}>
-              Back to services
-            </button>
-          </div>
-        </main>
-      </div>
-    )
-  }
-
   const [formData, setFormData] = useState(blankService)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+
+  // Load existing service if in edit mode
+  useState(() => {
+    if (isEdit && serviceId) {
+      import('../../api/provider').then(({ fetchProviderServiceById }) => {
+        fetchProviderServiceById(serviceId)
+          .then((res) => {
+            const s = res?.service
+            if (s) {
+              setFormData({
+                name: s.name || '',
+                category: s.category || serviceCategories[0]?.id,
+                status: s.status || 'Active', // assuming schema doesn't have status yet, default to Active
+                icon: s.icon || 'construct-outline', // schema might not have icon
+                description: s.description || '',
+                price: s.price || '',
+                priceType: s.priceType || 'Per visit',
+                image: s.image || '',
+                // These fields might not be in backend schema yet, so fallback
+                coverage: s.coverage || '',
+                availability: s.availability || '',
+                responseTime: s.responseTime || '',
+                addOns: s.addOns || '',
+              })
+            }
+          })
+          .catch((err) => setError('Failed to load service details.'))
+      })
+    }
+  }, [isEdit, serviceId])
+
 
   // Generic change handler for inputs + selects + textareas
   const handleChange = (event) => {
@@ -83,17 +97,26 @@ const ProviderServiceForm = ({ mode = 'create' }) => {
       setError('Please sign in as a provider before creating services.')
       return
     }
+    const payload = {
+      name: formData.name,
+      category: formData.category,
+      description: formData.description,
+      price: formData.price === '' ? undefined : Number(formData.price),
+      priceType: formData.priceType,
+      image: formData.image,
+    }
+
     try {
       setIsSaving(true)
       setError('')
-      await createProviderService(providerId, {
-        name: formData.name,
-        category: formData.category,
-        description: formData.description,
-        price: formData.price === '' ? undefined : Number(formData.price),
-        priceType: formData.priceType,
-        image: formData.image,
-      })
+
+      if (isEdit) {
+        const { updateProviderService } = await import('../../api/provider')
+        await updateProviderService(providerId, serviceId, payload)
+      } else {
+        await createProviderService(providerId, payload)
+      }
+
       navigate('/provider/services', { replace: true })
     } catch (err) {
       setError(err.message ?? 'Unable to save this service right now.')

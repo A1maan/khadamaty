@@ -71,13 +71,16 @@ const OTPVerification = () => {
         if (actor === 'provider') {
           window.localStorage.setItem('providerId', pendingId)
           window.localStorage.removeItem('pendingProviderId')
+          // Provider is verified but likely not approved yet
+          navigate('/provider/awaiting-approval')
+          return
         } else {
           window.localStorage.setItem('customerId', pendingId)
           window.localStorage.removeItem('pendingCustomerId')
+          window.localStorage.removeItem('pendingSignupType')
+          navigate('/customer/dashboard')
         }
-        window.localStorage.removeItem('pendingSignupType')
       }
-      navigate(actor === 'provider' ? '/provider/services' : '/customer/dashboard')
     } catch (error) {
       setErrorMessage(error.message ?? 'Verification failed. Please try again.')
     } finally {

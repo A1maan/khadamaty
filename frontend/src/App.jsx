@@ -11,6 +11,7 @@ import SignIn from './pages/Auth/SignIn'
 import OTPVerification from './pages/Auth/OTPVerification'
 import SignUpCustomerError from './pages/Auth/SignUpCustomerError'
 import SignUpProviderError from './pages/Auth/SignUpProviderError'
+import AwaitingApproval from './pages/Auth/AwaitingApproval'
 import AboutPage from './pages/AboutPage'
 import HelpPage from './pages/HelpPage'
 import CustomerDashboard from './pages/Customer/CustomerDashboard'
@@ -43,13 +44,15 @@ function App() {
         <Route path="/signup/selection" element={<SignUpSelection />} />
         <Route path="/signup/verify" element={<OTPVerification />} />
         <Route path="/signup/customer/error" element={<SignUpCustomerError />} />
+        <Route path="/signup/customer/error" element={<SignUpCustomerError />} />
         <Route path="/signup/provider/error" element={<SignUpProviderError />} />
+        <Route path="/provider/awaiting-approval" element={<AwaitingApproval />} />
         <Route path="/signin" element={<SignIn role="customer" />} />
         <Route path="/signin/provider" element={<SignIn role="provider" />} />
         <Route path="/signin/admin" element={<SignIn role="admin" />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/help" element={<HelpPage />} />
-        
+
         {/* Customer Routes */}
         <Route path="/customer/dashboard" element={<CustomerDashboard />} />
         <Route path="/customer/browse" element={<CustomerBrowse />} />
@@ -59,14 +62,14 @@ function App() {
         <Route path="/customer/active" element={<CustomerActive />} />
         <Route path="/customer/past" element={<CustomerPast />} />
         <Route path="/customer/saved" element={<CustomerSaved />} />
-        
+
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/users/providers" element={<AdminUsersProviders />} />
         <Route path="/admin/users/customers" element={<AdminUsersCustomers />} />
         <Route path="/admin/users/admins" element={<AdminUsersAdmins />} />
-        
+
         {/* Service Provider Routes */}
         <Route path="/provider/services" element={<ProviderServices />} />
         <Route path="/provider/services/new" element={<ProviderServiceForm mode="create" />} />

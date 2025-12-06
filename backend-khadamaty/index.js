@@ -19,6 +19,7 @@ import { handleProviderSignup } from './provider.js';
 import { verifyProviderOtp } from './provider.js';
 import { handleProviderSignin } from './provider.js';
 import { getProviderServices } from './provider.js';
+import { getProviderServiceById } from './provider.js';
 import { createProviderService } from './provider.js';
 import { updateProviderService } from './provider.js';
 import { deleteProviderService } from './provider.js';
@@ -36,6 +37,8 @@ import { rejectProvider } from './admin.js';
 import { updateProviderStatus } from './admin.js';
 import { getAllAdmins } from './admin.js';
 import { updateAdminRole } from './admin.js';
+import { signInAdmin } from './admin.js';
+import { getPendingProviders } from './admin.js';
 
 dotenv.config();
 
@@ -83,6 +86,7 @@ app.post("/provider/signup", handleProviderSignup);
 app.post("/provider/verify-otp", verifyProviderOtp);
 app.post("/provider/signin", handleProviderSignin);
 app.get("/provider/services", getProviderServices);
+app.get("/provider/services/:serviceId", getProviderServiceById);
 app.post("/provider/services", createProviderService);
 app.put("/provider/services/:serviceId", updateProviderService);
 app.delete("/provider/services/:serviceId", deleteProviderService);
@@ -93,6 +97,7 @@ app.get("/provider/active-requests", getActiveRequestsSP);
 app.get("/provider/past-requests", getPastRequestsSP);
 
 // Admin endpoints
+app.post("/admin/signin", signInAdmin);
 app.get("/admin/customers", getAllCustomers);
 app.get("/admin/service-providers", getAllServiceProviders);
 app.get("/admin/services", getAllServices);
@@ -101,3 +106,4 @@ app.post("/admin/providers/:providerId/approve", approveProvider);
 app.post("/admin/providers/:providerId/reject", rejectProvider);
 app.patch("/admin/providers/:providerId/status", updateProviderStatus);
 app.patch("/admin/admins/:adminId/role", updateAdminRole);
+app.get("/admin/providers/pending", getPendingProviders);

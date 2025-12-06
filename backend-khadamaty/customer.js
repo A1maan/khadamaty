@@ -141,6 +141,12 @@ export async function requestService(req, res) {
             return res.status(400).json({ message: "Customer ID is required" });
         }
         const { serviceId, datetime, notes } = req.body;
+        const service = await Service.findById(serviceId);
+        if (!service) {
+            return res.status(404).json({ message: "Service not found" });
+        }
+        await service.count++;
+        await service.save();
         const newRequest = new Request({ serviceId, datetime, notes, customerId })
         await newRequest.save();
         res.status(201).json({

@@ -33,7 +33,7 @@ export const createProviderService = (providerId, payload) =>
   });
 
 export const updateProviderService = (providerId, serviceId, payload) =>
-  apiRequest(`/provider/services?providerId=${encode(providerId)}&serviceId=${encode(serviceId)}`, {
+  apiRequest(`/provider/services/${encode(serviceId)}?providerId=${encode(providerId)}`, {
     method: 'PUT',
     body: payload,
   });
@@ -58,6 +58,17 @@ export const fetchProviderActiveRequests = (providerId, options = {}) =>
 
 export const fetchProviderPastRequests = (providerId, options = {}) =>
   apiRequest(`/provider/past-requests?providerId=${encode(providerId)}`, {
+    method: 'GET',
+    ...options,
+  });
+
+export const deleteProviderService = (serviceId) =>
+  apiRequest(`/provider/services/${encode(serviceId)}`, {
+    method: 'DELETE',
+  });
+
+export const fetchProviderServiceById = (serviceId, options = {}) =>
+  apiRequest(`/provider/services/${encode(serviceId)}`, {
     method: 'GET',
     ...options,
   });

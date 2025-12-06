@@ -41,7 +41,7 @@ export const updateProviderStatus = (providerId, status) => {
   // Map status strings to boolean values
   const isVerified = status === 'Activated' || status === 'Pending';
   const isFeatured = status === 'Activated';
-  
+
   return apiRequest(`/admin/providers/${encode(providerId)}/status`, {
     method: 'PATCH',
     body: { isVerified, isFeatured },
@@ -54,3 +54,15 @@ export const updateAdminRole = (adminId, role) =>
     body: { role },
   });
 
+
+export const signinAdmin = (payload) =>
+  apiRequest('/admin/signin', {
+    method: 'POST',
+    body: payload,
+  });
+
+export const fetchPendingProviders = (options = {}) =>
+  apiRequest('/admin/providers/pending', {
+    method: 'GET',
+    ...options,
+  });

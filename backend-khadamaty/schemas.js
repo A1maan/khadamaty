@@ -22,8 +22,9 @@ const serviceProviderSchema = new mongoose.Schema({
     nationalID: mongoose.Schema.Types.String,
     otp: mongoose.Schema.Types.Number,
     otpExpiry: mongoose.Schema.Types.Date,
-    isVerified: mongoose.Schema.Types.Boolean,
-    isFeatured: mongoose.Schema.Types.Boolean,
+    isVerified: { type: mongoose.Schema.Types.Boolean, required: false },
+    isFeatured: { type: mongoose.Schema.Types.Boolean, required: false },
+    isApproved: { type: mongoose.Schema.Types.Boolean, required: false, default: false },
     createdAt: { type: mongoose.Schema.Types.Date, default: Date.now },
     updatedAt: { type: mongoose.Schema.Types.Date, default: Date.now },
 });
@@ -38,6 +39,7 @@ const serviceSchema = new mongoose.Schema({
     priceType: mongoose.Schema.Types.String,
     image: mongoose.Schema.Types.String,
     providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'ServiceProvider' },
+    count: { type: mongoose.Schema.Types.Number, default: 0 },
     createdAt: { type: mongoose.Schema.Types.Date, default: Date.now },
     updatedAt: { type: mongoose.Schema.Types.Date, default: Date.now },
 });
@@ -83,3 +85,14 @@ const adminSchema = new mongoose.Schema({
 });
 
 export const Admin = mongoose.model("Admin", adminSchema);
+
+const reviewSchema = new mongoose.Schema({
+    serviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
+    customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
+    rating: { type: mongoose.Schema.Types.Number, min: 1, max: 5 },
+    comment: mongoose.Schema.Types.String,
+    createdAt: { type: mongoose.Schema.Types.Date, default: Date.now },
+    updatedAt: { type: mongoose.Schema.Types.Date, default: Date.now },
+});
+
+export const Review = mongoose.model("Review", reviewSchema);

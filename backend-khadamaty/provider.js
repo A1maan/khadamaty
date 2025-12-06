@@ -90,11 +90,24 @@ export async function verifyProviderOtp(req, res) {
 export async function handleProviderSignin(req, res) {
     try {
         const { email, password } = req.body;
+        // Don't filter by isApproved: true in the query immediately, find the user first
         const provider = await ServiceProvider.findOne({ email });
+
         if (!provider) return res.status(400).json({ message: "Invalid email" });
+
         const isPasswordValid = await bcrypt.compare(password, provider.password);
         if (!isPasswordValid) return res.status(400).json({ message: "Invalid password" });
+
         if (!provider.isVerified) return res.status(403).json({ message: "Provider not verified yet" });
+
+        // New Approval Check
+        if (!provider.isApproved) {
+            return res.status(403).json({
+                message: "Provider not approved yet",
+                code: "NOT_APPROVED"
+            });
+        }
+
         res.status(200).json({ message: "Provider signed in successfully", providerId: provider._id, provider });
     } catch (err) {
         res.status(500).json({ message: "Error signing in provider" });
@@ -251,6 +264,18 @@ export const getPastRequestsSP = async (req, res) => {
 
 
 
+
+
+export async function getProviderServiceById(req, res) {
+    try {
+        const { serviceId } = req.params;
+        const service = await Service.findById(serviceId);
+        if (!service) return res.status(404).json({ message: "Service not found" });
+        res.status(200).json({ service });
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching service" });
+    }
+}
 
 export async function updateProviderRequestStatus(req, res) {
     try {

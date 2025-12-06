@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { fetchProviderServices } from '../../api/provider'
+import { fetchProviderServices, deleteProviderService } from '../../api/provider'
 import './Provider.css'
 
 const formatPrice = (price, priceType) => {
@@ -32,6 +32,17 @@ const ProviderServices = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const providerId = typeof window !== 'undefined' ? window.localStorage.getItem('providerId') : null
+
+  const handleDelete = async (serviceId) => {
+    if (!window.confirm('Are you sure you want to delete this service?')) return
+    try {
+      await deleteProviderService(serviceId)
+      // Remove from local state
+      setServices((prev) => prev.filter((s) => s.id !== serviceId))
+    } catch (err) {
+      alert('Failed to delete service: ' + err.message)
+    }
+  }
 
   useEffect(() => {
     if (!providerId) {
@@ -83,7 +94,7 @@ const ProviderServices = () => {
   return (
     <div className="provider-page">
       <Sidebar userType="provider" />
-      
+
       <main className="provider-content">
         <div className="provider-header">
           <div>
@@ -162,8 +173,12 @@ const ProviderServices = () => {
                   Pause/Resume (coming soon)
                 </button>
                 {/* Remove button*/}
-                <button type="button" className="btn-danger" disabled>
-                  Delete (coming soon)
+                <button
+                  type="button"
+                  className="btn-danger"
+                  onClick={() => handleDelete(service.id)}
+                >
+                  Delete
                 </button>
               </div>
             </article>

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import { signinCustomer } from '../../api/customer'
 import { signinProvider } from '../../api/provider'
+import { signinAdmin } from '../../api/admin'
 import './Auth.css'
 
 // this is just a global object to hold the user roles with their specific descriptions and configurations
@@ -72,9 +73,27 @@ const SignIn = ({ role = 'customer' }) => {
         if (response?.providerId) {
           localStorage.setItem('providerId', response.providerId)
         }
+      } else if (role === 'admin') {
+        const response = await signinAdmin({
+          email: formData.email,
+          password: formData.password
+        })
+        if (response?.data?._id) {
+          localStorage.setItem('adminId', response.data._id)
+        }
       }
       navigate(config.redirect)
     } catch (err) {
+      if (role === 'provider' && err.message === 'Provider not approved yet') {
+        navigate('/provider/awaiting-approval');
+        return;
+      }
+      // Also catch 403 if the api client throws objects with status
+      if (role === 'provider' && err.status === 403 && err.message?.includes('approved')) {
+        navigate('/provider/awaiting-approval');
+        return;
+      }
+
       setError(err.message || 'Sign in failed')
     }
   }

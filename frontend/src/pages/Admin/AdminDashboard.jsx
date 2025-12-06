@@ -1,38 +1,41 @@
 /* this admin dashboard shows approvals queue and a quick top providers view */
 import { useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { fetchAllServiceProviders, approveProvider, rejectProvider } from '../../api/admin'
+import { fetchAllServiceProviders, fetchPendingProviders, approveProvider, rejectProvider } from '../../api/admin'
 import './Admin.css'
 
 const AdminDashboard = () => {
   const [providers, setProviders] = useState([])
+  const [pendingProviders, setPendingProviders] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    const loadProviders = async () => {
-      try {
-        setLoading(true)
-        const response = await fetchAllServiceProviders()
-        const providerData = response?.data || []
-        setProviders(providerData)
-        setError(null)
-      } catch (err) {
-        setError(err.message || 'Failed to load providers')
-        setProviders([])
-      } finally {
-        setLoading(false)
-      }
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      const [allResponse, pendingResponse] = await Promise.all([
+        fetchAllServiceProviders(),
+        fetchPendingProviders()
+      ])
+
+      setProviders(allResponse?.data || [])
+      setPendingProviders(pendingResponse?.data || [])
+      setError(null)
+    } catch (err) {
+      setError(err.message || 'Failed to load data')
+    } finally {
+      setLoading(false)
     }
-    loadProviders()
+  }
+
+  useEffect(() => {
+    loadData()
   }, [])
 
   const handleApprove = async (providerId) => {
     try {
       await approveProvider(providerId, false)
-      // Refresh providers list
-      const response = await fetchAllServiceProviders()
-      setProviders(response?.data || [])
+      await loadData() // Refresh both lists
       alert('Provider approved successfully')
     } catch (err) {
       alert('Failed to approve provider: ' + (err.message || 'Unknown error'))
@@ -42,17 +45,12 @@ const AdminDashboard = () => {
   const handleReject = async (providerId) => {
     try {
       await rejectProvider(providerId)
-      // Refresh providers list
-      const response = await fetchAllServiceProviders()
-      setProviders(response?.data || [])
+      await loadData() // Refresh both lists
       alert('Provider rejected successfully')
     } catch (err) {
       alert('Failed to reject provider: ' + (err.message || 'Unknown error'))
     }
   }
-
-  /* filter providers waiting for approval (not verified) */
-  const pendingApprovals = providers.filter((user) => !user.isVerified)
 
   /* get top activated providers (verified and featured, first 3 only) */
   const topProviders = providers
@@ -62,7 +60,7 @@ const AdminDashboard = () => {
   return (
     <div className="admin-page">
       <Sidebar userType="admin" />
-      
+
       <main className="admin-content">
         <section className="approvals-section">
           <h2>Incoming Approvals</h2>
@@ -70,21 +68,22 @@ const AdminDashboard = () => {
           {error && <div className="content-placeholder error">{error}</div>}
           <div className="approvals-grid">
             {/* fallback if no pending approvals */}
-            {!loading && !error && pendingApprovals.length === 0 && (
+            {!loading && !error && pendingProviders.length === 0 && (
               <div className="content-placeholder">No pending profiles right now.</div>
             )}
 
             {/* render pending approval cards */}
-            {pendingApprovals.map((approval) => (
+            {pendingProviders.map((approval) => (
               <div key={approval._id || approval.id} className="approval-card">
                 <ion-icon name="person-circle-outline"></ion-icon>
 
                 <div className="approval-info">
                   <h4>{approval.name || 'Unnamed Provider'}</h4>
                   <p>{approval.email || ''}</p>
+                  <p style={{ fontSize: '0.8rem', color: '#666' }}>ID: {approval.nationalID}</p>
 
-                  <button className="btn-view" onClick={() => alert(`Viewing ${approval.name}`)}>
-                    View Profile
+                  <button className="btn-view" onClick={() => alert(`Viewing ${approval.name}\nPhone: ${approval.phone}\nNational ID: ${approval.nationalID}`)}>
+                    View Details
                   </button>
                 </div>
 
@@ -92,6 +91,7 @@ const AdminDashboard = () => {
                   {/* approve provider from queue */}
                   <button
                     className="btn-approve"
+                    title="Approve"
                     onClick={() => handleApprove(approval._id || approval.id)}
                   >
                     <ion-icon name="checkbox-outline"></ion-icon>
@@ -100,6 +100,7 @@ const AdminDashboard = () => {
                   {/* reject provider from queue */}
                   <button
                     className="btn-reject"
+                    title="Reject"
                     onClick={() => handleReject(approval._id || approval.id)}
                   >
                     <ion-icon name="close-circle-outline"></ion-icon>
