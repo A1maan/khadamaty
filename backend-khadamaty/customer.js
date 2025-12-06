@@ -5,7 +5,7 @@ import { Service } from "./schemas.js";
 import dotenv from "dotenv";
 import { Request } from "./schemas.js";
 import { request } from "express";
-import { SavedService } from "./schemas.js";
+import { SavedService, ServiceProvider } from "./schemas.js";
 
 dotenv.config();
 export const transporter = nodemailer.createTransport({
@@ -123,7 +123,7 @@ export async function verifyOtp(req, res) {
 
 export async function getServices(req, res) {
     try {
-        const { category } = req.query;
+        const { category, priceRange } = req.query;
         const filter = category && category !== "all" ? { category } : {};
         const services = await Service.find(filter);
         res.status(200).json({ message: "Services fetched successfully", services: services });
@@ -161,9 +161,10 @@ export async function getActiveRequests(req, res) {
         if (!customerId) {
             return res.status(400).json({ message: "Customer ID is required" });
         }
-        const requests = await Request.find({ customerId: customerId, status: "active" });
+        const requestssss = await Request.find({ customerId: customerId });
+        const requests = await Request.find({ customerId: customerId, status: { $in: ["pending", "active"] } });
         if (!requests || requests.length === 0) {
-            return res.status(404).json({ message: "No active requests found" });
+            return res.status(404).json({ message: "No active requests found!!" });
         }
         res.status(200).json({ message: "Requests fetched successfully", requests: requests });
     } catch (error) {
@@ -204,23 +205,24 @@ export async function saveService(req, res) {
 export async function getSavedServices(req, res) {
     try {
         const customerId = req.query.id;
-        const services = await SavedService.find({ customerId: id })
-        if (!services) {
-            request.status(201).json({ success: true, message: "No  saved services found!", data: null });
-            return;
+        if (!customerId) {
+            return res.status(400).json({ message: "Customer ID is required" });
         }
-        request.json(201).json({ success: true, message: "Saved services fetched successfully", data: services });
+        const services = await SavedService.find({ customerId: customerId }).populate('serviceId');
+        if (!services || services.length === 0) {
+            return res.status(200).json({ success: true, message: "No saved services found!", data: [] });
+        }
+        res.status(200).json({ success: true, message: "Saved services fetched successfully", data: services });
     } catch (error) {
-        console.error("Error Fetching saved Services");
-        res.status(400).json({ message: "Error fetching saved services" });
-        return;
+        console.error("Error Fetching saved Services:", error);
+        res.status(500).json({ message: "Error fetching saved services" });
     }
 }
 
 export async function unsaveService(req, res) {
     try {
         const { customerId, savedServiceId } = req.body;
-        const service = SavedService.findOneAndDelete({ customerId: customerId, serviceId: savedServiceId });
+        const service = await SavedService.findOneAndDelete({ customerId: customerId, serviceId: savedServiceId });
         if (!service) {
             return res.status(404).json({ message: "Service not found" });
         }
@@ -229,7 +231,27 @@ export async function unsaveService(req, res) {
         console.error("Error unsaving service:", error);
         res.status(500).json({ message: "Error unsaving service" });
     }
+
 }
+
+export async function getFeaturedProviders(req, res) {
+    try {
+        // Assuming 'isFeatured' is a field in ServiceProvider schema
+        // If not, we might just return top rated ones or random ones for now
+        // Checking schemas.js, ServiceProvider has isFeatured!
+        const providers = await ServiceProvider.find({ isFeatured: true, isVerified: true }).limit(6);
+
+        // Map to simpler structure if needed, or return as is
+        // Dashboard expects: name, service, rating, jobs
+        // We might need to join with services to get "service" type 
+        // For now let's just return the provider details
+        res.status(200).json({ success: true, providers: providers });
+    } catch (error) {
+        console.error("Error fetching featured providers:", error);
+        res.status(500).json({ message: "Error fetching featured providers" });
+    }
+}
+
 
 
 

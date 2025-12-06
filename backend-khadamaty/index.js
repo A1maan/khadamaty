@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import morgan from 'morgan';
 import { handleSignup } from './customer.js';
 import { handleSigniIn } from './customer.js';
 import { verifyOtp } from './customer.js';
@@ -12,6 +13,7 @@ import { getPastRequests } from './customer.js';
 import { saveService } from './customer.js';
 import { getSavedServices } from './customer.js';
 import { unsaveService } from './customer.js';
+import { getFeaturedProviders } from './customer.js';
 
 import { handleProviderSignup } from './provider.js';
 import { verifyProviderOtp } from './provider.js';
@@ -39,6 +41,7 @@ dotenv.config();
 
 const port = 8000;
 const app = express();
+app.use(morgan('dev'));
 
 app.use(cors());
 app.use(express.json());
@@ -71,7 +74,9 @@ app.get("/customer/active-requests", getActiveRequests);
 app.get("/customer/past-requests", getPastRequests);
 app.post("/customer/save-service", saveService);
 app.get("/customer/saved-services", getSavedServices);
+app.get("/customer/saved-services", getSavedServices);
 app.delete("/customer/unsave-service", unsaveService);
+app.get("/public/providers/featured", getFeaturedProviders);
 
 // Provider endpoints
 app.post("/provider/signup", handleProviderSignup);

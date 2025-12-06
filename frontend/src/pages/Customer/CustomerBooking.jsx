@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { fetchServices, createCustomerBooking } from '../../api/customer'
+import { fetchServices, createCustomerBooking, saveService } from '../../api/customer'
 import './CustomerPages.css'
 
 const CustomerBooking = () => {
@@ -95,8 +95,21 @@ const CustomerBooking = () => {
     }
   }
 
-  const handleSaveForLater = () => {
-    setFeedback('Saving for later will be available soon.')
+  const handleSaveForLater = async () => {
+    const customerId = typeof window !== 'undefined' ? window.localStorage.getItem('customerId') : null
+    if (!customerId) {
+      setFeedback('Please sign in to save services.')
+      return
+    }
+    if (!service) return
+
+    try {
+      setFeedback('')
+      await saveService(customerId, service.id)
+      setFeedback('Service saved successfully!')
+    } catch (error) {
+      setFeedback(error.message ?? 'Failed to save service.')
+    }
   }
 
   if (loadingService) {

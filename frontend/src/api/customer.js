@@ -43,3 +43,26 @@ export const fetchPastRequests = (customerId, options = {}) =>
     ...options,
   });
 
+
+export const saveService = (customerId, serviceId) =>
+  apiRequest('/customer/save-service', {
+    method: 'POST',
+    body: { customerId, serviceId },
+  });
+
+export const fetchSavedServices = (customerId) =>
+  apiRequest(`/customer/saved-services?id=${encode(customerId)}`, {
+    method: 'GET',
+  });
+
+export const unsaveService = (customerId, savedServiceId) =>
+  apiRequest('/customer/unsave-service', {
+    method: 'DELETE',
+    body: { customerId, savedServiceId },
+  });
+
+export const fetchFeaturedProviders = (options = {}) =>
+  apiRequest('/public/providers/featured', {
+    method: 'GET',
+    ...options,
+  });

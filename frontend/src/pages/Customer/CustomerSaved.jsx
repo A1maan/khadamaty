@@ -1,15 +1,51 @@
 /* saved list so customers can rebook or remove providers */
+import { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { useMockData } from '../../context/MockDataContext'
+import { fetchSavedServices, unsaveService } from '../../api/customer'
 import './CustomerPages.css'
 
 const CustomerSaved = () => {
-  const { customerRequests, providerMap, bookSavedProvider, removeSavedProvider } = useMockData()
-  const { savedProviders } = customerRequests
+  const [savedProviders, setSavedProviders] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const detailedProviders = savedProviders
-    .map((entry) => ({ ...entry, provider: providerMap[entry.providerId] }))
-    .filter((entry) => Boolean(entry.provider))
+  useEffect(() => {
+    const loadSavedServices = async () => {
+      const customerId = typeof window !== 'undefined' ? window.localStorage.getItem('customerId') : null
+      if (!customerId) {
+        setLoading(false)
+        return
+      }
+      try {
+        const response = await fetchSavedServices(customerId)
+        if (response.success) {
+          setSavedProviders(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch saved services')
+        }
+      } catch (err) {
+        setError('Failed to load saved services.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadSavedServices()
+  }, [])
+
+  const handleRemove = async (serviceId) => {
+    const customerId = typeof window !== 'undefined' ? window.localStorage.getItem('customerId') : null
+    if (!customerId) return
+
+    try {
+      await unsaveService(customerId, serviceId)
+      // Optimistic update
+      setSavedProviders((prev) => prev.filter((item) => (item.serviceId._id || item.serviceId) !== serviceId))
+    } catch (err) {
+      console.error('Failed to remove service:', err)
+      alert('Failed to remove service. Please try again.')
+    }
+  }
 
   return (
     <div className="customer-page">
@@ -22,48 +58,55 @@ const CustomerSaved = () => {
             <p>Quickly book your favorite pros again.</p>
           </div>
         </header>
-        {// Incase no saved providers
-        }
+
         <section className="provider-list">
-          {detailedProviders.length === 0 && (
+          {loading && <p>Loading saved services...</p>}
+          {error && <p className="error-text">{error}</p>}
+
+          {!loading && !error && savedProviders.length === 0 && (
             <div className="empty-state">
               <ion-icon name="bookmark-outline"></ion-icon>
               <p>You have not saved any providers yet.</p>
             </div>
           )}
-          {// Display Saved Providers with book again and remove buttons 
-          }
-          {detailedProviders.map((entry) => (
-            <article key={entry.providerId} className="provider-row">
-              <div className="provider-avatar">
-                <ion-icon name="person-circle-outline"></ion-icon>
-              </div>
-              <div className="provider-summary">
-                <h3>{entry.provider.name}</h3>
-                <p>{entry.provider.description}</p>
-                <div className="provider-meta">
-                  <span>Added on {new Date(entry.addedAt ?? Date.now()).toLocaleDateString('en-US')}</span>
-                  <span>{entry.provider.pricing}</span>
+
+          {!loading && !error && savedProviders.map((entry) => {
+            const service = entry.serviceId
+            // Handle case where service might be null/undefined due to deletion
+            if (!service) return null;
+
+            return (
+              <article key={entry._id} className="provider-row">
+                <div className="provider-avatar">
+                  <ion-icon name="person-circle-outline"></ion-icon>
                 </div>
-              </div>
-              <div className="booking-actions">
-                <button
-                  type="button"
-                  className="btn-primary-solid"
-                  onClick={() => bookSavedProvider(entry.providerId)}
-                >
-                  Book Again
-                </button>
-                <button
-                  type="button"
-                  className="btn-ghost"
-                  onClick={() => removeSavedProvider(entry.providerId)}
-                >
-                  Remove
-                </button>
-              </div>
-            </article>
-          ))}
+                <div className="provider-summary">
+                  <h3>{service.name}</h3>
+                  <p>{service.description}</p>
+                  <div className="provider-meta">
+                    <span>Added on {new Date(entry.createdAt).toLocaleDateString('en-US')}</span>
+                    <span>SAR {service.price} {service.priceType ? `/ ${service.priceType}` : ''}</span>
+                  </div>
+                </div>
+                <div className="booking-actions">
+                  <a
+                    href={`/customer/booking/${service._id}`}
+                    className="btn-primary-solid"
+                    style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}
+                  >
+                    Book Again
+                  </a>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    onClick={() => handleRemove(service._id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </article>
+            )
+          })}
         </section>
       </main>
     </div>

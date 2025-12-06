@@ -1,13 +1,37 @@
 // customer home hub with search, featured pros, and quick category links
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar/Sidebar'
-import { featuredProviders, serviceCategories } from '../../data/customerData'
+import { serviceCategories } from '../../data/customerData'
+import { fetchFeaturedProviders } from '../../api/customer'
 import './CustomerDashboard.css'
 
 const CustomerDashboard = () => {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
+  const [featuredProviders, setFeaturedProviders] = useState([])
+  const [loadingFeatured, setLoadingFeatured] = useState(true)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchFeaturedProviders({ signal: controller.signal })
+      .then((data) => {
+        const providers = (data?.providers ?? []).map(p => ({
+          id: p._id ?? p.id,
+          name: p.name,
+          service: 'Service Provider', // We might need to fetch their top service or category
+          rating: 4.9, // static for now as schema doesn't seem to have rating yet
+          jobs: 0 // static for now
+        }))
+        setFeaturedProviders(providers)
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') console.error('Failed to load featured', err)
+      })
+      .finally(() => setLoadingFeatured(false))
+
+    return () => controller.abort()
+  }, [])
 
   const handleSearch = (event) => { // This function is used for searching it will add the query to the URL
     event.preventDefault()
@@ -15,13 +39,13 @@ const CustomerDashboard = () => {
     if (query.trim()) params.set('search', query.trim())
     navigate(params.size ? `/customer/browse?${params.toString()}` : '/customer/browse')
   }
-    // This will be used to navigate for the filter element
+  // This will be used to navigate for the filter element
   const goToFilters = () => navigate('/customer/browse/filter')
 
   return (
     <div className="customer-dashboard">
       <Sidebar userType="customer" />
-      
+
       <main className="dashboard-content">
         <form className="dashboard-banner" onSubmit={handleSearch}>
           { // This form is for seaching, it will call the handleSearch function
@@ -55,6 +79,9 @@ const CustomerDashboard = () => {
             </Link>
           </div>
           <div className="providers-grid">
+            {loadingFeatured && <p>Loading featured providers...</p>}
+            {!loadingFeatured && featuredProviders.length === 0 && <p>No featured providers yet.</p>}
+
             { // content will appear once provider data is available
             }
             {featuredProviders.map((provider) => (

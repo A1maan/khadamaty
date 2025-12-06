@@ -1,19 +1,5 @@
 /* this provider holds the mock data store so every page can pretend to hit real apis */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { serviceProviders } from '../data/customerData'
-import {
-  myServices as providerServicesSeed,
-  pendingRequests as providerPendingSeed,
-  activeRequests as providerActiveSeed,
-  pastRequests as providerPastSeed,
-  providerReviews as providerReviewsSeed,
-} from '../data/providerData'
-import {
-  providerUsers as adminProviderSeed,
-  customerUsers as adminCustomerSeed,
-  adminUsers as adminAdminsSeed,
-} from '../data/adminData'
-
 const MockDataContext = createContext(null)
 const STORAGE_KEY = 'khadamatyState'
 const STORAGE_VERSION = 1
@@ -39,61 +25,23 @@ const uid = (prefix) => `${prefix}-${Math.random().toString(36).slice(2, 8)}`
 
 const cloneArray = (arr) => arr.map((item) => ({ ...item }))
 
-const initialCustomerActive = [
-  {
-    id: 'req-101',
-    providerId: 'svc-001',
-    status: 'Awaiting confirmation',
-    date: '2025-02-14',
-    time: '17:00',
-    notes: 'Kitchen sink leak needs urgent fix.',
-  },
-  {
-    id: 'req-102',
-    providerId: 'svc-002',
-    status: 'Scheduled',
-    date: '2025-02-15',
-    time: '09:00',
-    notes: 'Deep clean before hosting family.',
-  },
-]
+const initialCustomerActive = []
 
-const initialCustomerPast = [
-  {
-    id: 'past-01',
-    providerId: 'svc-003',
-    completedOn: '2025-02-12',
-    rating: 5,
-    feedback: 'Car looked brand new afterwards.',
-    status: 'Completed',
-  },
-  {
-    id: 'past-02',
-    providerId: 'svc-004',
-    completedOn: '2025-02-04',
-    rating: 4,
-    feedback: 'Great photography set, quick delivery.',
-    status: 'Completed',
-  },
-]
+const initialCustomerPast = []
 
-const initialSavedProviders = [
-  { providerId: 'svc-001', addedAt: '2025-02-10' },
-  { providerId: 'svc-005', addedAt: '2025-02-11' },
-]
 
 const initialProviderState = {
-  services: cloneArray(providerServicesSeed),
-  pendingRequests: cloneArray(providerPendingSeed),
-  activeRequests: cloneArray(providerActiveSeed),
-  pastRequests: cloneArray(providerPastSeed),
-  reviews: providerReviewsSeed.map((review) => ({ ...review, response: review.response ?? '' })),
+  services: [],
+  pendingRequests: [],
+  activeRequests: [],
+  pastRequests: [],
+  reviews: [],
 }
 
 const initialAdminState = {
-  providerUsers: cloneArray(adminProviderSeed),
-  customerUsers: cloneArray(adminCustomerSeed),
-  adminUsers: cloneArray(adminAdminsSeed),
+  providerUsers: [],
+  customerUsers: [],
+  adminUsers: [],
 }
 
 const deriveAvailabilityTag = (availability = '') => {
@@ -142,12 +90,13 @@ export const MockDataProvider = ({ children }) => {
     const base = persisted?.customerRequests ?? {
       activeRequests: initialCustomerActive,
       pastRequests: initialCustomerPast,
-      savedProviders: initialSavedProviders,
     }
+
+    const safeActive = Array.isArray(base.activeRequests) ? base.activeRequests : []
 
     return {
       ...base,
-      activeRequests: base.activeRequests.map((request) => ({
+      activeRequests: safeActive.map((request) => ({
         ...request,
         window: request.window ?? formatWindow(request.date, request.time),
       })),
@@ -156,7 +105,7 @@ export const MockDataProvider = ({ children }) => {
 
   const [customerRequests, setCustomerRequests] = useState(deriveInitialCustomerState)
   const [publicServices, setPublicServices] = useState(() =>
-    (persisted?.publicServices ?? serviceProviders).map((service) => mapServiceToPublic(service))
+    Array.isArray(persisted?.publicServices) ? persisted.publicServices : []
   )
   const [providerData, setProviderData] = useState(() => persisted?.providerData ?? initialProviderState)
   const [adminData, setAdminData] = useState(() => persisted?.adminData ?? initialAdminState)
@@ -164,11 +113,13 @@ export const MockDataProvider = ({ children }) => {
   const toastTimerRef = useRef(null)
 
   const providerMap = useMemo(
-    () =>
-      publicServices.reduce((acc, provider) => {
+    () => {
+      const services = Array.isArray(publicServices) ? publicServices : []
+      return services.reduce((acc, provider) => {
         acc[provider.id] = provider
         return acc
-      }, {}),
+      }, {})
+    },
     [publicServices]
   )
 
@@ -246,41 +197,6 @@ export const MockDataProvider = ({ children }) => {
     [providerMap, pushToast]
   )
 
-  const saveProviderForLater = useCallback(
-    (providerId, notes = '') => {
-      setCustomerRequests((prev) => {
-        if (prev.savedProviders.some((entry) => entry.providerId === providerId)) {
-          return prev
-        }
-        return {
-          ...prev,
-          savedProviders: [{ providerId, addedAt: new Date().toISOString(), notes }, ...prev.savedProviders],
-        }
-      })
-      const providerName = providerMap[providerId]?.name ?? 'provider'
-      pushToast(`${providerName} saved for later`)
-    },
-    [providerMap, pushToast]
-  )
-
-  const removeSavedProvider = useCallback((providerId) => {
-    setCustomerRequests((prev) => ({
-      ...prev,
-      savedProviders: prev.savedProviders.filter((entry) => entry.providerId !== providerId),
-    }))
-    pushToast('Removed from saved providers')
-  }, [pushToast])
-
-  const bookSavedProvider = useCallback(
-    (providerId) => {
-      const targetDate = new Date()
-      targetDate.setDate(targetDate.getDate() + 1)
-      const date = targetDate.toISOString().slice(0, 10)
-      const time = '10:00'
-      addCustomerRequest({ providerId, date, time, notes: 'Scheduled via saved list' })
-    },
-    [addCustomerRequest]
-  )
 
   const updateActiveRequestStatus = useCallback(
     (requestId) => {
@@ -400,7 +316,7 @@ export const MockDataProvider = ({ children }) => {
         ...prev,
         services: [newService, ...prev.services],
       }))
-       upsertPublicService(newService)
+      upsertPublicService(newService)
       pushToast('Service created')
       return newId
     },
@@ -561,9 +477,6 @@ export const MockDataProvider = ({ children }) => {
       providerData,
       adminData,
       addCustomerRequest,
-      saveProviderForLater,
-      removeSavedProvider,
-      bookSavedProvider,
       updateActiveRequestStatus,
       cancelCustomerRequest,
       rebookPastRequest,
@@ -592,9 +505,6 @@ export const MockDataProvider = ({ children }) => {
       providerData,
       adminData,
       addCustomerRequest,
-      saveProviderForLater,
-      removeSavedProvider,
-      bookSavedProvider,
       updateActiveRequestStatus,
       cancelCustomerRequest,
       rebookPastRequest,
