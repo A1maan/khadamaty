@@ -53,7 +53,7 @@ export async function approveProvider(req, res) {
         const { isFeatured } = req.body;
         const provider = await ServiceProvider.findByIdAndUpdate(
             providerId,
-            { isApproved: true, isFeatured: isFeatured ?? false, updatedAt: Date.now() },
+            { isApproved: true, isRejected: false, isFeatured: isFeatured ?? false, updatedAt: Date.now() },
             { new: true }
         );
         if (!provider) {
@@ -102,7 +102,7 @@ export async function rejectProvider(req, res) {
         const { providerId } = req.params;
         const provider = await ServiceProvider.findByIdAndUpdate(
             providerId,
-            { isApproved: false, updatedAt: Date.now() },
+            { isApproved: false, isRejected: true, isFeatured: false, updatedAt: Date.now() },
             { new: true }
         );
         if (!provider) {
@@ -165,7 +165,7 @@ export async function updateAdminRole(req, res) {
 
 export async function getPendingProviders(req, res) {
     try {
-        const providers = await ServiceProvider.find({ isApproved: false });
+        const providers = await ServiceProvider.find({ isApproved: false, isRejected: { $ne: true } });
         res.status(200).json({ success: true, message: "Pending providers received successfully", data: providers });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
