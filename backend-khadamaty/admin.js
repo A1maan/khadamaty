@@ -53,7 +53,7 @@ export async function approveProvider(req, res) {
         const { isFeatured } = req.body;
         const provider = await ServiceProvider.findByIdAndUpdate(
             providerId,
-            { isApproved: true, isFeatured: isFeatured ?? false, isRejected: false, updatedAt: Date.now() },
+            { isApproved: true, isRejected: false, isFeatured: isFeatured ?? false, updatedAt: Date.now() },
             { new: true }
         );
         if (!provider) {
@@ -102,7 +102,7 @@ export async function rejectProvider(req, res) {
         const { providerId } = req.params;
         const provider = await ServiceProvider.findByIdAndUpdate(
             providerId,
-            { isApproved: false, isRejected: true, updatedAt: Date.now() },
+            { isApproved: false, isRejected: true, isFeatured: false, updatedAt: Date.now() },
             { new: true }
         );
         if (!provider) {
