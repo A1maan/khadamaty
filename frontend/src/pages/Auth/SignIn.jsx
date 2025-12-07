@@ -61,7 +61,7 @@ const SignIn = ({ role = 'customer' }) => {
     setError('')
     try {
       if (role === 'customer') {
-        await signinCustomer({
+        const response = await signinCustomer({
           email: formData.email,
           password: formData.password
         })
