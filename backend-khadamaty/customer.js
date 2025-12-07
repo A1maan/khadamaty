@@ -53,7 +53,7 @@ export async function handleSigniIn(req, res) {
     if (!isPasswordValid) {
         return res.status(400).json({ message: "Invalid password" });
     }
-    res.status(200).json({ message: "Customer signed in successfully" });
+    res.status(200).json({ message: "Customer signed in successfully", data: customer });
 }
 
 

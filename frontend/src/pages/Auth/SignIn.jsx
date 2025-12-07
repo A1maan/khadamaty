@@ -65,6 +65,9 @@ const SignIn = ({ role = 'customer' }) => {
           email: formData.email,
           password: formData.password
         })
+        if (response?.data._id) {
+          localStorage.setItem('customerId', response.data._id);
+        }
       } else if (role === 'provider') {
         const response = await signinProvider({
           email: formData.email,
